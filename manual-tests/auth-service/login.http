@@ -1,5 +1,5 @@
 ### GET request to example server
-POST http://localhost:8080/login
+POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
@@ -7,7 +7,7 @@ Content-Type: application/json
   "password": "password123"
 }
 
-> {% client.global.set("token", response.body.token) %}
+> {% client.global.set("token", response.headers.valueOf("Set-Cookie").split(';')[0].slice(6)) %}
 
 
 ###

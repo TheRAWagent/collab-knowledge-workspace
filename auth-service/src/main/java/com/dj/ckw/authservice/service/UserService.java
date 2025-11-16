@@ -1,5 +1,6 @@
 package com.dj.ckw.authservice.service;
 
+import com.dj.ckw.authservice.exception.UserNotFoundException;
 import com.dj.ckw.authservice.model.User;
 import com.dj.ckw.authservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -16,5 +17,14 @@ public class UserService {
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public void markUserAsVerified(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException(email);
+        }
+        user.get().setVerified(true);
+        userRepository.save(user.get());
     }
 }

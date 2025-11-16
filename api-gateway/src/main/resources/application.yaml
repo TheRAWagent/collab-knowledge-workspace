@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: "api-gateway"
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth-service-route
+              uri: http://ckw-auth-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /auth/login
+                      - /auth/register
+                      - /auth/verify
+              filters:
+                - name: StripPrefix
+                  args:
+                    part: 1
+            - id: auth-docs-route
+              uri: http://ckw-auth-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /api-docs/auth
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /api-docs/auth
+                    replacement: /v3/api-docs
+            - id: user-service-route
+              uri: http://ckw-user-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /user/**
+              filters:
+                - name: StripPrefix
+                  args:
+                    part: 1
+                - name: JwtValidation
+server:
+  port: 8080

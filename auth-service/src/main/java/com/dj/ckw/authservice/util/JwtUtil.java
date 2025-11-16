@@ -28,10 +28,9 @@ public class JwtUtil {
         this.jacksonObjectMapper = jacksonObjectMapper;
     }
 
-    public String generateToken(String email, String role) {
+    public String generateToken(String email) {
         return Jwts.builder()
                 .subject(email)
-                .claim("role",role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 3600 * 1000 * 10))
                 .signWith(secretKey)
@@ -43,7 +42,6 @@ public class JwtUtil {
             Jws<Claims> claims = Jwts.parser().verifyWith((SecretKey) secretKey).build().parseSignedClaims(token);
             String json = jacksonObjectMapper.writeValueAsString(Map.of(
                     "id", claims.getPayload().getSubject(),
-                    "role", claims.getPayload().get("role"),
                     "iat", claims.getPayload().getIssuedAt().getTime(),
                     "exp", claims.getPayload().getExpiration().getTime()
             ));

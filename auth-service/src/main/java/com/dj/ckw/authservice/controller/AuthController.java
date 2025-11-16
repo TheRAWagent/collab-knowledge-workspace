@@ -1,15 +1,20 @@
 package com.dj.ckw.authservice.controller;
 
 import com.dj.ckw.authservice.dto.IntrospectionResponse;
-import com.dj.ckw.authservice.dto.LoginRequestDto;
-import com.dj.ckw.authservice.dto.LoginResponseDto;
+import com.dj.ckw.authservice.dto.AuthRequestDto;
+import com.dj.ckw.authservice.dto.UserVerificationRequestDto;
+import com.dj.ckw.authservice.dto.validators.CreateUserValidationGroup;
 import com.dj.ckw.authservice.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.groups.Default;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.Optional;
 
 @RestController
@@ -22,15 +27,32 @@ public class AuthController {
 
     @Operation(summary = "Generate Token on user login")
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
-        Optional<String> tokenOptional = authService.authenticate(loginRequestDto);
+    public ResponseEntity<Void> login(@RequestBody @Validated AuthRequestDto authRequestDto) {
+        Optional<String> tokenOptional = authService.authenticate(authRequestDto);
 
         if (tokenOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String token = tokenOptional.get();
-        return ResponseEntity.ok(new LoginResponseDto(token));
+        String cookie = ResponseCookie.from("token", tokenOptional.get()).httpOnly(true).secure(true).path("/").maxAge(Duration.ofDays(7).toSeconds()) // 7 days
+                .sameSite("Lax").build().toString();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie).build();
+    }
+
+    @Operation(summary = "Register user using email/password")
+    @PostMapping("/register")
+    public ResponseEntity<Void> createUser(@RequestBody @Validated({Default.class, CreateUserValidationGroup.class}) AuthRequestDto authRequestDto) {
+        authService.createUser(authRequestDto);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Verify user using code")
+    @PostMapping("/verify")
+    public ResponseEntity<Void> verifyUser(@RequestBody @Validated UserVerificationRequestDto userVerificationRequestDto) {
+        authService.verifyUser(userVerificationRequestDto);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Validate Token")

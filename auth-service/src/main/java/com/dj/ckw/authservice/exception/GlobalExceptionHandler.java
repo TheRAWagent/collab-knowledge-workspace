@@ -13,4 +13,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Void> handleJwtException(JwtException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Void> handleUserNotFound(JwtException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
 }
