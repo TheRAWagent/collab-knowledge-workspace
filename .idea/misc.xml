@@ -5,6 +5,7 @@
     <file type="web" url="file://$PROJECT_DIR$/api-gateway" />
     <file type="web" url="file://$PROJECT_DIR$/auth-service" />
     <file type="web" url="file://$PROJECT_DIR$/user-service" />
+    <file type="web" url="file://$PROJECT_DIR$/workspace-service" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="graalvm-ce-25" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />

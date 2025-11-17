@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/collab-knowledge-workspace.iml" filepath="$PROJECT_DIR$/collab-knowledge-workspace.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/workspace-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/workspace-service.main.iml" />
     </modules>
   </component>
 </project>

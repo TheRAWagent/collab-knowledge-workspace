@@ -18,6 +18,9 @@
       <module name="user-service" options="-parameters" />
       <module name="user-service.main" options="-parameters" />
       <module name="user-service.test" options="-parameters" />
+      <module name="workspace-service" options="-parameters" />
+      <module name="workspace-service.main" options="-parameters" />
+      <module name="workspace-service.test" options="-parameters" />
     </option>
   </component>
 </project>

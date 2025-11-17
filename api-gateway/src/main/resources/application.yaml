@@ -43,5 +43,41 @@ spring:
                   args:
                     part: 1
                 - name: JwtValidation
+            - id: user-docs-route
+              uri: http://ckw-user-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /api-docs/user
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /api-docs/user
+                    replacement: /v3/api-docs
+            - id: workspace-service-route
+              uri: http://ckw-workspace-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /workspace/**
+              filters:
+                - name: StripPrefix
+                  args:
+                    part: 1
+                - name: JwtValidation
+            - id: workspace-docs-route
+              uri: http://ckw-workspace-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /api-docs/workspace
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /api-docs/workspace
+                    replacement: /v3/api-docs
 server:
   port: 8080
