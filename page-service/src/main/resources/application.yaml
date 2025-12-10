@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: page-service
+  threads:
+    virtual:
+      enabled: true

@@ -32,7 +32,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.13.0")
     implementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
-
+    implementation("org.bouncycastle:bcprov-jdk18on:1.83")
 
 }
 

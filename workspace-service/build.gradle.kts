@@ -29,15 +29,24 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.grpc:grpc-services")
-    implementation("org.springframework.grpc:spring-grpc-server-web-spring-boot-starter")
+    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")
+    annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
+    implementation("io.grpc:grpc-netty-shaded")
+    modules {
+        module("io.grpc:grpc-netty") {
+            replacedBy("io.grpc:grpc-netty-shaded", "Use Netty shaded instead of regular Netty")
+        }
+    }
 }
 
 dependencyManagement {

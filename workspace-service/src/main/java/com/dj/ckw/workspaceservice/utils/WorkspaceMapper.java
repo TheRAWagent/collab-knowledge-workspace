@@ -8,26 +8,28 @@ import java.util.Date;
 
 public final class WorkspaceMapper {
 
-    private WorkspaceMapper() {}
+    private WorkspaceMapper() {
+    }
 
     public static Workspace toEntity(CreateWorkspaceRequest req, String ownerId) {
-        Workspace w = new Workspace();
-        w.setName(req.getName());
-        w.setDescription(req.getDescription());
-        w.setOwnerId(ownerId);
-        w.setCreatedAt(new Date());
-        w.setUpdatedAt(new Date());
-        return w;
+        return Workspace.builder()
+                .name(req.getName())
+                .description(req.getDescription())
+                .ownerId(ownerId)
+                .description(req.getDescription())
+                .createdAt(new Date())
+                .updatedAt(new Date())
+                .build();
     }
 
     public static WorkspaceResponse toDto(Workspace w) {
-        WorkspaceResponse r = new WorkspaceResponse();
-        r.setId(w.getId());
-        r.setName(w.getName());
-        r.setDescription(w.getDescription());
-        r.setOwnerId(w.getOwnerId());
-        r.setCreatedAt(w.getCreatedAt());
-        r.setUpdatedAt(w.getUpdatedAt());
-        return r;
+        return WorkspaceResponse.builder()
+                .id(w.getId())
+                .name(w.getName())
+                .description(w.getDescription())
+                .ownerId(w.getOwnerId())
+                .createdAt(w.getCreatedAt())
+                .updatedAt(w.getUpdatedAt())
+                .build();
     }
 }

@@ -1,65 +1,30 @@
 package com.dj.ckw.workspaceservice.dto;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 import java.util.UUID;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WorkspaceResponse {
+    @NotNull
     private UUID id;
+    @NotNull
     private String name;
+    @NotNull
     private String description;
+    @NotNull
     private String ownerId;
+    @NotNull
     private Date createdAt;
+    @NotNull
     private Date updatedAt;
-
-    public WorkspaceResponse() {
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }
 

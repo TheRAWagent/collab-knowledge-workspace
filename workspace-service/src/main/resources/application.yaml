@@ -1,3 +1,6 @@
 spring:
   application:
     name: workspace-service
+  threads:
+    virtual:
+      enabled: true

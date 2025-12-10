@@ -15,6 +15,9 @@
       <module name="auth-service" options="-parameters" />
       <module name="auth-service.main" options="-parameters" />
       <module name="auth-service.test" options="-parameters" />
+      <module name="page-service" options="-parameters" />
+      <module name="page-service.main" options="-parameters" />
+      <module name="page-service.test" options="-parameters" />
       <module name="user-service" options="-parameters" />
       <module name="user-service.main" options="-parameters" />
       <module name="user-service.test" options="-parameters" />

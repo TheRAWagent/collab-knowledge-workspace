@@ -61,7 +61,7 @@ spring:
                 - name: Path
                   args:
                     patterns:
-                      - /workspace/**
+                      - /workspaces/**
               filters:
                 - name: StripPrefix
                   args:
@@ -79,5 +79,46 @@ spring:
                   args:
                     regexp: /api-docs/workspace
                     replacement: /v3/api-docs
+            - id: page-service-route
+              uri: http://ckw-page-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /workspace/{workspace_id}/pages/**
+              filters:
+                - name: JwtValidation
+                - name: PageAccessValidation
+                - name: StripPrefix
+                  args:
+                    part: 1
+            - id: page-docs-route
+              uri: http://ckw-page-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /api-docs/page
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /api-docs/page
+                    replacement: /v3/api-docs
+          globalcors:
+            cors-configurations:
+              "[/**]":
+                          allowedOrigins: "http://localhost:5173"
+                          allowedMethods:
+                            - GET
+                            - POST
+                            - PUT
+                            - DELETE
+                            - OPTIONS
+                            - PATCH
+                          allowedHeaders: "*"
+                          allowCredentials: true
 server:
   port: 8080
+logging:
+  level:
+    root: info

@@ -1,10 +1,8 @@
 package com.dj.ckw.workspaceservice.controller;
 
-import com.dj.ckw.workspaceservice.dto.CreateWorkspaceRequest;
-import com.dj.ckw.workspaceservice.dto.PagedResponse;
-import com.dj.ckw.workspaceservice.dto.UpdateWorkspaceRequest;
-import com.dj.ckw.workspaceservice.dto.WorkspaceResponse;
+import com.dj.ckw.workspaceservice.dto.*;
 import com.dj.ckw.workspaceservice.model.RequestInfo;
+import com.dj.ckw.workspaceservice.model.WorkspaceMember;
 import com.dj.ckw.workspaceservice.service.WorkspaceService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -12,10 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/workspaces")
 public class WorkspaceController {
 
     private final WorkspaceService service;
@@ -49,7 +47,7 @@ public class WorkspaceController {
             @RequestParam(name = "search", required = false) String search
     ) {
         String owner = requestInfo.getEmail();
-        return ResponseEntity.ok().body(service.listByOwnerPaged(owner, page, size, search));
+        return ResponseEntity.ok().body(service.listByUserPaged(owner, page, size, search));
     }
 
     @Operation(summary = "Update an existing workspace")
@@ -64,6 +62,17 @@ public class WorkspaceController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         String requester = requestInfo.getEmail();
         service.delete(id, requester);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseEntity<WorkspaceMembersResponseDto> getMembers(@PathVariable UUID id) {
+        return ResponseEntity.ok().body(service.getWorkspaceMembers(id, requestInfo.getEmail()));
+    }
+
+    @PostMapping("/{id}/transfer-ownership")
+    public ResponseEntity<Void> transferOwnership(@PathVariable UUID id, @RequestParam String newOwnerId) {
+        service.transferOwnership(id, newOwnerId, requestInfo.getEmail());
         return ResponseEntity.noContent().build();
     }
 }

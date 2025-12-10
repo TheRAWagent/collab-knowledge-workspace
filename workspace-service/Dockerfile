@@ -1,4 +1,4 @@
-FROM gradle:9.2.0-jdk25-alpine AS builder
+FROM gradle:9.2.1-jdk25-noble AS builder
 WORKDIR /home/gradle/project
 
 COPY build.gradle* build.gradle.kts* settings.gradle* settings.gradle.kts* gradle.properties* ./
@@ -21,4 +21,6 @@ WORKDIR /app
 COPY --from=builder /output/app.jar /app/app.jar
 
 EXPOSE 8080
+EXPOSE 9090
+
 ENTRYPOINT ["java","-jar","/app/app.jar"]

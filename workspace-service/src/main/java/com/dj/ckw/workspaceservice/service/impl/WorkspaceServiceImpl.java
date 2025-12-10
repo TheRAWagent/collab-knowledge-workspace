@@ -1,13 +1,13 @@
 package com.dj.ckw.workspaceservice.service.impl;
 
-import com.dj.ckw.workspaceservice.dto.CreateWorkspaceRequest;
-import com.dj.ckw.workspaceservice.dto.PagedResponse;
-import com.dj.ckw.workspaceservice.dto.UpdateWorkspaceRequest;
-import com.dj.ckw.workspaceservice.dto.WorkspaceResponse;
+import com.dj.ckw.workspaceservice.dto.*;
+import com.dj.ckw.workspaceservice.enums.WorkspaceMemberRole;
 import com.dj.ckw.workspaceservice.exception.ConflictException;
 import com.dj.ckw.workspaceservice.exception.NotFoundException;
 import com.dj.ckw.workspaceservice.exception.UnauthorizedException;
 import com.dj.ckw.workspaceservice.model.Workspace;
+import com.dj.ckw.workspaceservice.model.WorkspaceMember;
+import com.dj.ckw.workspaceservice.repository.WorkspaceMemberRepository;
 import com.dj.ckw.workspaceservice.repository.WorkspaceRepository;
 import com.dj.ckw.workspaceservice.service.WorkspaceService;
 import com.dj.ckw.workspaceservice.utils.WorkspaceMapper;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,25 +25,34 @@ import java.util.stream.Collectors;
 @Transactional
 public class WorkspaceServiceImpl implements WorkspaceService {
 
-    private final WorkspaceRepository repo;
+    private final WorkspaceRepository workspaceRepository;
+    private final WorkspaceMemberRepository workspaceMemberRepository;
 
-    public WorkspaceServiceImpl(WorkspaceRepository repo) {
-        this.repo = repo;
+    public WorkspaceServiceImpl(WorkspaceRepository workspaceRepository, WorkspaceMemberRepository workspaceMemberRepository) {
+        this.workspaceRepository = workspaceRepository;
+        this.workspaceMemberRepository = workspaceMemberRepository;
     }
 
-    @Override
     public WorkspaceResponse create(CreateWorkspaceRequest req, String ownerId) {
-        if (repo.existsByNameAndOwnerId(req.getName(), ownerId)) {
+        if (workspaceRepository.existsByNameAndOwnerId(req.getName(), ownerId)) {
             throw new ConflictException("Workspace with the same name already exists for this owner");
         }
         Workspace w = WorkspaceMapper.toEntity(req, ownerId);
-        Workspace saved = repo.save(w);
+        Workspace saved = workspaceRepository.save(w);
+
+        WorkspaceMember ownerMember = WorkspaceMember.builder()
+                .workspace(w)
+                .role(WorkspaceMemberRole.OWNER)
+                .userId(ownerId)
+                .build();
+        workspaceMemberRepository.save(ownerMember);
+
         return WorkspaceMapper.toDto(saved);
     }
 
     @Override
     public WorkspaceResponse getById(UUID id, String requesterId) {
-        Workspace w = repo.findById(id).orElseThrow(() -> new NotFoundException("Workspace not found"));
+        Workspace w = workspaceRepository.findById(id).orElseThrow(() -> new NotFoundException("Workspace not found"));
         // allow owner or members logic could go here; for now only owner can view
         if (!w.getOwnerId().equals(requesterId)) {
             throw new UnauthorizedException("Not allowed to access this workspace");
@@ -51,12 +61,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
-    public List<WorkspaceResponse> listByOwner(String ownerId) {
-        return repo.findAllByOwnerId(ownerId).stream().map(WorkspaceMapper::toDto).collect(Collectors.toList());
-    }
-
-    @Override
-    public PagedResponse<WorkspaceResponse> listByOwnerPaged(String ownerId, int page, int size, String search) {
+    public PagedResponse<WorkspaceResponse> listByUserPaged(String ownerId, int page, int size, String search) {
         // Convert 1-based page to 0-based
         int clientPage = Math.max(1, page);
         int effectivePage = clientPage - 1;
@@ -65,9 +70,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         PageRequest pr = PageRequest.of(effectivePage, effectiveSize);
         Page<Workspace> p;
         if (search != null && !search.isBlank()) {
-            p = repo.findAllByOwnerIdAndNameContainingIgnoreCase(ownerId, search, pr);
+            p = workspaceRepository.findAllByOwnerIdAndNameContainingIgnoreCase(ownerId, search, pr);
         } else {
-            p = repo.findAllByOwnerId(ownerId, pr);
+            p = workspaceRepository.findAllByOwnerId(ownerId, pr);
         }
 
         List<WorkspaceResponse> content = p.getContent().stream().map(WorkspaceMapper::toDto).collect(Collectors.toList());
@@ -75,13 +80,46 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
+    public WorkspaceMembersResponseDto getWorkspaceMembers(UUID workspaceId, String requesterId) {
+        Workspace w = workspaceRepository.findById(workspaceId).orElseThrow(() -> new NotFoundException("Workspace not found"));
+        WorkspaceMember workspaceMember = workspaceMemberRepository.findByUserIdAndWorkspace(requesterId, w);
+        if (workspaceMember == null || !workspaceMember.getWorkspace().getId().equals(workspaceId)) {
+            throw new UnauthorizedException("Not allowed to access members of this workspace");
+        }
+        return new WorkspaceMembersResponseDto(workspaceMemberRepository.findByWorkspace(w));
+    }
+
+    @Override
+    public void transferOwnership(UUID workspaceId, String newOwnerId, String requesterId) {
+        Workspace w = workspaceRepository.findById(workspaceId).orElseThrow(() -> new NotFoundException("Workspace not found"));
+        WorkspaceMember newOwnerMember = workspaceMemberRepository.findByUserIdAndWorkspace(newOwnerId, w);
+        WorkspaceMember currentOwnerMember = workspaceMemberRepository.findByUserIdAndWorkspace(requesterId, w);
+        if (!w.getOwnerId().equals(requesterId)) {
+            throw new UnauthorizedException("Not allowed to transfer ownership of this workspace");
+        }
+        if (newOwnerMember == null || !newOwnerMember.getWorkspace().getId().equals(workspaceId)) {
+            throw new ConflictException("New owner must be a member of the workspace");
+        }
+        if(currentOwnerMember == null || !currentOwnerMember.getWorkspace().getId().equals(workspaceId)) {
+            throw new ConflictException("Current owner must be a member of the workspace");
+        }
+        w.setOwnerId(newOwnerId);
+        w.setUpdatedAt(new java.util.Date());
+        newOwnerMember.setRole(WorkspaceMemberRole.OWNER);
+        currentOwnerMember.setRole(WorkspaceMemberRole.EDITOR);
+        workspaceRepository.save(w);
+        workspaceMemberRepository.save(newOwnerMember);
+        workspaceMemberRepository.save(currentOwnerMember);
+    }
+
+    @Override
     public WorkspaceResponse update(UUID id, UpdateWorkspaceRequest req, String requesterId) {
-        Workspace w = repo.findById(id).orElseThrow(() -> new NotFoundException("Workspace not found"));
+        Workspace w = workspaceRepository.findById(id).orElseThrow(() -> new NotFoundException("Workspace not found"));
         if (!w.getOwnerId().equals(requesterId)) {
             throw new UnauthorizedException("Not allowed to update this workspace");
         }
         if (req.getName() != null && !req.getName().isBlank() && !req.getName().equals(w.getName())) {
-            if (repo.existsByNameAndOwnerId(req.getName(), requesterId)) {
+            if (workspaceRepository.existsByNameAndOwnerId(req.getName(), requesterId)) {
                 throw new ConflictException("Workspace with the same name already exists for this owner");
             }
             w.setName(req.getName());
@@ -90,16 +128,25 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             w.setDescription(req.getDescription());
         }
         w.setUpdatedAt(new java.util.Date());
-        Workspace saved = repo.save(w);
+        Workspace saved = workspaceRepository.save(w);
         return WorkspaceMapper.toDto(saved);
     }
 
     @Override
     public void delete(UUID id, String requesterId) {
-        Workspace w = repo.findById(id).orElseThrow(() -> new NotFoundException("Workspace not found"));
+        Workspace w = workspaceRepository.findById(id).orElseThrow(() -> new NotFoundException("Workspace not found"));
         if (!w.getOwnerId().equals(requesterId)) {
             throw new UnauthorizedException("Not allowed to delete this workspace");
         }
-        repo.delete(w);
+        workspaceRepository.delete(w);
+    }
+
+    public Optional<WorkspaceMemberRole> getWorkspaceMemberRole(String workspaceId, String requesterId) {
+        Workspace w = workspaceRepository.findById(UUID.fromString(workspaceId)).orElseThrow(() -> new NotFoundException("Workspace not found"));
+
+        Optional<WorkspaceMember> workspaceMember = w.getMembers().stream().filter(member -> member.getUserId().equals(requesterId)).findFirst();
+
+        return workspaceMember.map(WorkspaceMember::getRole);
+
     }
 }

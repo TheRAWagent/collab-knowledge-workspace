@@ -9,6 +9,5 @@ spring:
 
     type: redis
 
-
 server:
   port: 8080

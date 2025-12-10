@@ -19,9 +19,9 @@ public class JwtValidationGatewayFilterFactory extends AbstractGatewayFilterFact
     @Override
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
-            String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+            String token = exchange.getRequest().getCookies().getFirst("token").getValue();
 
-            if (token == null || !token.startsWith("Bearer ")) {
+            if (token.isEmpty()) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }

@@ -58,11 +58,11 @@ public class AuthController {
     @Operation(summary = "Validate Token")
     @GetMapping("/validate")
     public ResponseEntity<IntrospectionResponse> validateToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String encodedContext = authService.validateToken(authHeader.substring(7));
+        String encodedContext = authService.validateToken(authHeader);
 
         return ResponseEntity.ok(new IntrospectionResponse(encodedContext));
     }

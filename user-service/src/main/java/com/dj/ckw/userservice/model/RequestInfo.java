@@ -19,7 +19,6 @@ public class RequestInfo {
     public void setEmail(String decodedJson) throws JsonProcessingException {
         JsonNode idNode = this.objectMapper.readTree(decodedJson).get("id");
         this.email = idNode != null && !idNode.isNull() ? idNode.asText() : null;
-        System.out.println(this.email);
     }
 
     public String getEmail() {

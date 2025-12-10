@@ -1,4 +1,4 @@
-FROM gradle:9.2.0-jdk25-alpine AS builder
+FROM gradle:9.2.1-jdk25-alpine AS builder
 WORKDIR /home/gradle/project
 
 COPY build.gradle* build.gradle.kts* settings.gradle* settings.gradle.kts* gradle.properties* ./

@@ -1,0 +1,19 @@
+syntax = "proto3";
+option java_multiple_files=true;
+option java_package="com.dj.ckw.workspaceservice.grpc";
+import "workspace-member-role.proto";
+
+message PageAccessRequest {
+  string page_id = 1;
+  string workspace_id = 2;
+  string user_id = 3;
+}
+
+message PageAccessResponse {
+  bool has_access = 1;
+  WorkspaceMemberRole workspace_member_role = 2; // e.g., "read", "write", "admin"
+}
+
+service WorkspaceService {
+  rpc checkPageAccess(PageAccessRequest) returns (PageAccessResponse);
+}
