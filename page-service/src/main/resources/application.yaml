@@ -1,6 +1,11 @@
 spring:
   application:
     name: page-service
-  threads:
-    virtual:
-      enabled: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+# Variables to configure while deploying to different environments
+# SPRING_R2DBC_URL -> Database connection URL
+# SPRING_R2DBC_USERNAME -> Database username
+# SPRING_R2DBC_PASSWORD -> Database password
+# SPRING_FLYWAY_URL -> Flyway database connection URL(Same as R2DBC URL but with JDBC prefix, credentials are picked from R2DBC properties)

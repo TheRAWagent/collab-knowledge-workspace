@@ -1,0 +1,1 @@
+ALTER TABLE documents ADD COLUMN version INT DEFAULT 1;
