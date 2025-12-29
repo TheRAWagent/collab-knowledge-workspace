@@ -5,7 +5,6 @@
     "": {
       "name": "collaboration-service",
       "dependencies": {
-        "@hocuspocus/extension-database": "^3.4.3",
         "@hocuspocus/extension-logger": "^3.4.3",
         "@hocuspocus/extension-redis": "^3.4.3",
         "@hocuspocus/server": "^3.4.3",
@@ -92,8 +91,6 @@
     "@gerrit0/mini-shiki": ["@gerrit0/mini-shiki@3.19.0", "", { "dependencies": { "@shikijs/engine-oniguruma": "^3.19.0", "@shikijs/langs": "^3.19.0", "@shikijs/themes": "^3.19.0", "@shikijs/types": "^3.19.0", "@shikijs/vscode-textmate": "^10.0.2" } }, "sha512-ZSlWfLvr8Nl0T4iA3FF/8VH8HivYF82xQts2DY0tJxZd4wtXJ8AA0nmdW9lmO4hlrh3f9xNwEPtOgqETPqKwDA=="],
 
     "@hocuspocus/common": ["@hocuspocus/common@3.4.3", "", { "dependencies": { "lib0": "^0.2.87" } }, "sha512-wnBBO9sWcVAoUPEXN1qO+zk3HaEF9VTemxB6kjuuH6e1dHnD0v12m4P4X1wiZVhmMIX/PMl/fu3MGtYWQJz8gA=="],
-
-    "@hocuspocus/extension-database": ["@hocuspocus/extension-database@3.4.3", "", { "dependencies": { "@hocuspocus/server": "^3.4.3" }, "peerDependencies": { "yjs": "^13.6.8" } }, "sha512-XVXHuPi3DEaZ7fbnTVDDsLYiWCNWB/zkZ3/BQ4YYtZdP8oZNztYe1JoNk6VuzdMDky0cNr1ZCXb1VRlLc0toVA=="],
 
     "@hocuspocus/extension-logger": ["@hocuspocus/extension-logger@3.4.3", "", { "dependencies": { "@hocuspocus/server": "^3.4.3" } }, "sha512-7VeFqjUy3U4f6I5ktl2lZJrLCg26/4Q/dsnS+RyzdYNnBpzdVf7GMwrPEp2U8vRDwdLKZli90EhupNF7pOMYGQ=="],
 

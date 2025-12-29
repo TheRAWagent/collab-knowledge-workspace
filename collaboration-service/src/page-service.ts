@@ -4,11 +4,28 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import axios from 'axios';
+import * as axios from 'axios';
 import type {
   AxiosRequestConfig,
   AxiosResponse
 } from 'axios';
+
+export interface BlockDto {
+  id?: string;
+  type: string;
+  content?: BlockDto[];
+  attrs?: string;
+  text?: string;
+}
+
+export interface BlockSnapshotRequest {
+  version?: number;
+  schemaVersion?: number;
+  updatedAt?: string;
+  updatedBy?: string;
+  source?: string;
+  content?: BlockDto;
+}
 
 export interface PageRequest {
   /** @minLength 1 */
@@ -25,68 +42,41 @@ export interface PageResponse {
   updatedAt: string;
 }
 
-export type BlockRequestType = typeof BlockRequestType[keyof typeof BlockRequestType];
-
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BlockRequestType = {
-  PARAGRAPH: 'PARAGRAPH',
-  HEADING_1: 'HEADING_1',
-  HEADING_2: 'HEADING_2',
-  HEADING_3: 'HEADING_3',
-  BULLET_LIST: 'BULLET_LIST',
-  NUMBER_LIST: 'NUMBER_LIST',
-  TODO: 'TODO',
-  IMAGE: 'IMAGE',
-  CODE: 'CODE',
-  CALLOUT: 'CALLOUT',
-  DIVIDER: 'DIVIDER',
-  DOCUMENT: 'DOCUMENT',
-} as const;
-
-export interface BlockRequest {
-  parentId: string;
-  type: BlockRequestType;
-  contentJson: string;
-  orderIndex: number;
-}
-
-export type BlockResponseType = typeof BlockResponseType[keyof typeof BlockResponseType];
-
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BlockResponseType = {
-  PARAGRAPH: 'PARAGRAPH',
-  HEADING_1: 'HEADING_1',
-  HEADING_2: 'HEADING_2',
-  HEADING_3: 'HEADING_3',
-  BULLET_LIST: 'BULLET_LIST',
-  NUMBER_LIST: 'NUMBER_LIST',
-  TODO: 'TODO',
-  IMAGE: 'IMAGE',
-  CODE: 'CODE',
-  CALLOUT: 'CALLOUT',
-  DIVIDER: 'DIVIDER',
-  DOCUMENT: 'DOCUMENT',
-} as const;
-
-export interface BlockResponse {
-  id: string;
-  pageId: string;
+export interface BlockTreeNodeDto {
+  id?: string;
   parentId?: string;
-  type: BlockResponseType;
-  contentJson: string;
-  orderIndex: number;
-  createdAt: string;
-  updatedAt: string;
+  type?: string;
+  position?: string;
+  content?: JsonNode;
+  attrs?: JsonNode;
+  /** Child blocks */
+  children?: BlockTreeNodeDto;
 }
+
+export interface DocumentTreeResponse {
+  documentId?: string;
+  version?: number;
+  blocks?: BlockTreeNodeDto[];
+}
+
+export interface JsonNode {}
 
 export const getOpenAPIDefinition = () => {
+const saveSnapshot = <TData = AxiosResponse<void>>(
+    documentId: string,
+    blockSnapshotRequest: BlockSnapshotRequest, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.put(
+      `http://ckw-page-service:8080/internal/documents/${documentId}/snapshot`,
+      blockSnapshotRequest,options
+    );
+  }
+
 const getPages = <TData = AxiosResponse<PageResponse[]>>(
     workspaceId: string, options?: AxiosRequestConfig
  ): Promise<TData> => {
-    return axios.get(
-      `http://localhost:8080/${workspaceId}/pages`,options
+    return axios.default.get(
+      `http://ckw-page-service:8080/${workspaceId}/documents`,options
     );
   }
 
@@ -94,29 +84,9 @@ const createPage = <TData = AxiosResponse<PageResponse>>(
     workspaceId: string,
     pageRequest: PageRequest, options?: AxiosRequestConfig
  ): Promise<TData> => {
-    return axios.post(
-      `http://localhost:8080/${workspaceId}/pages`,
+    return axios.default.post(
+      `http://ckw-page-service:8080/${workspaceId}/documents`,
       pageRequest,options
-    );
-  }
-
-const getBlocks = <TData = AxiosResponse<BlockResponse[]>>(
-    workspaceId: string,
-    pageId: string, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.get(
-      `http://localhost:8080/${workspaceId}/pages/${pageId}/blocks`,options
-    );
-  }
-
-const createBlock = <TData = AxiosResponse<BlockResponse>>(
-    workspaceId: string,
-    pageId: string,
-    blockRequest: BlockRequest, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.post(
-      `http://localhost:8080/${workspaceId}/pages/${pageId}/blocks`,
-      blockRequest,options
     );
   }
 
@@ -124,8 +94,8 @@ const getPage = <TData = AxiosResponse<PageResponse>>(
     workspaceId: string,
     pageId: string, options?: AxiosRequestConfig
  ): Promise<TData> => {
-    return axios.get(
-      `http://localhost:8080/${workspaceId}/pages/${pageId}`,options
+    return axios.default.get(
+      `http://ckw-page-service:8080/${workspaceId}/documents/${pageId}`,options
     );
   }
 
@@ -133,8 +103,8 @@ const deletePage = <TData = AxiosResponse<void>>(
     workspaceId: string,
     pageId: string, options?: AxiosRequestConfig
  ): Promise<TData> => {
-    return axios.delete(
-      `http://localhost:8080/${workspaceId}/pages/${pageId}`,options
+    return axios.default.delete(
+      `http://ckw-page-service:8080/${workspaceId}/documents/${pageId}`,options
     );
   }
 
@@ -143,41 +113,26 @@ const updatePage = <TData = AxiosResponse<PageResponse>>(
     pageId: string,
     pageRequest: PageRequest, options?: AxiosRequestConfig
  ): Promise<TData> => {
-    return axios.patch(
-      `http://localhost:8080/${workspaceId}/pages/${pageId}`,
+    return axios.default.patch(
+      `http://ckw-page-service:8080/${workspaceId}/documents/${pageId}`,
       pageRequest,options
     );
   }
 
-const deleteBlock = <TData = AxiosResponse<void>>(
+const getTree = <TData = AxiosResponse<DocumentTreeResponse>>(
     workspaceId: string,
-    pageId: string,
-    blockId: string, options?: AxiosRequestConfig
+    id: string, options?: AxiosRequestConfig
  ): Promise<TData> => {
-    return axios.delete(
-      `http://localhost:8080/${workspaceId}/pages/${pageId}/blocks/${blockId}`,options
+    return axios.default.get(
+      `http://ckw-page-service:8080/${workspaceId}/documents/${id}/tree`,options
     );
   }
 
-const updateBlock = <TData = AxiosResponse<BlockResponse>>(
-    workspaceId: string,
-    pageId: string,
-    blockId: string,
-    blockRequest: BlockRequest, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.patch(
-      `http://localhost:8080/${workspaceId}/pages/${pageId}/blocks/${blockId}`,
-      blockRequest,options
-    );
-  }
-
-return {getPages,createPage,getBlocks,createBlock,getPage,deletePage,updatePage,deleteBlock,updateBlock}};
+return {saveSnapshot,getPages,createPage,getPage,deletePage,updatePage,getTree}};
+export type SaveSnapshotResult = AxiosResponse<void>
 export type GetPagesResult = AxiosResponse<PageResponse[]>
 export type CreatePageResult = AxiosResponse<PageResponse>
-export type GetBlocksResult = AxiosResponse<BlockResponse[]>
-export type CreateBlockResult = AxiosResponse<BlockResponse>
 export type GetPageResult = AxiosResponse<PageResponse>
 export type DeletePageResult = AxiosResponse<void>
 export type UpdatePageResult = AxiosResponse<PageResponse>
-export type DeleteBlockResult = AxiosResponse<void>
-export type UpdateBlockResult = AxiosResponse<BlockResponse>
+export type GetTreeResult = AxiosResponse<DocumentTreeResponse>

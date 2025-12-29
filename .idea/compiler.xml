@@ -35,4 +35,7 @@
       <module name="workspace-service.test" options="-parameters" />
     </option>
   </component>
+  <component name="TypeScriptCompiler">
+    <option name="useServicePoweredTypesEnabledManually" value="true" />
+  </component>
 </project>
