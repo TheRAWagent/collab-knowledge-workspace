@@ -11,17 +11,17 @@ import type {
 } from 'axios';
 
 export interface BlockDto {
-  id?: string;
   type: string;
   content?: BlockDto[];
   attrs?: string;
+  marks?: string;
   text?: string;
 }
 
 export interface BlockSnapshotRequest {
   version?: number;
   schemaVersion?: number;
-  updatedAt?: string;
+  generatedAt?: string;
   updatedBy?: string;
   source?: string;
   content?: BlockDto;
@@ -42,26 +42,24 @@ export interface PageResponse {
   updatedAt: string;
 }
 
-export interface BlockTreeNodeDto {
-  id?: string;
-  parentId?: string;
-  type?: string;
-  position?: string;
-  content?: JsonNode;
-  attrs?: JsonNode;
-  /** Child blocks */
-  children?: BlockTreeNodeDto;
-}
-
-export interface DocumentTreeResponse {
-  documentId?: string;
+export interface SnapshotResponse {
   version?: number;
-  blocks?: BlockTreeNodeDto[];
+  schemaVersion?: number;
+  generatedAt?: string;
+  updatedBy?: string;
+  source?: string;
+  contentJson?: string;
 }
-
-export interface JsonNode {}
 
 export const getOpenAPIDefinition = () => {
+const getSnapshot = <TData = AxiosResponse<SnapshotResponse>>(
+    documentId: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.default.get(
+      `http://ckw-page-service:8080/internal/documents/${documentId}/snapshot`,options
+    );
+  }
+
 const saveSnapshot = <TData = AxiosResponse<void>>(
     documentId: string,
     blockSnapshotRequest: BlockSnapshotRequest, options?: AxiosRequestConfig
@@ -119,20 +117,11 @@ const updatePage = <TData = AxiosResponse<PageResponse>>(
     );
   }
 
-const getTree = <TData = AxiosResponse<DocumentTreeResponse>>(
-    workspaceId: string,
-    id: string, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.default.get(
-      `http://ckw-page-service:8080/${workspaceId}/documents/${id}/tree`,options
-    );
-  }
-
-return {saveSnapshot,getPages,createPage,getPage,deletePage,updatePage,getTree}};
+return {getSnapshot,saveSnapshot,getPages,createPage,getPage,deletePage,updatePage}};
+export type GetSnapshotResult = AxiosResponse<SnapshotResponse>
 export type SaveSnapshotResult = AxiosResponse<void>
 export type GetPagesResult = AxiosResponse<PageResponse[]>
 export type CreatePageResult = AxiosResponse<PageResponse>
 export type GetPageResult = AxiosResponse<PageResponse>
 export type DeletePageResult = AxiosResponse<void>
 export type UpdatePageResult = AxiosResponse<PageResponse>
-export type GetTreeResult = AxiosResponse<DocumentTreeResponse>

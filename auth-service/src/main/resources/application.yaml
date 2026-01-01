@@ -8,6 +8,9 @@ spring:
       time-to-live: 10m
 
     type: redis
+  threads:
+    virtual:
+      enabled: true
 
 server:
   port: 8080

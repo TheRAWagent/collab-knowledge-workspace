@@ -1,5 +1,5 @@
 
-const blockNodes = new Set([
+export const blockNodes = new Set([
     'paragraph',
     'heading',
     'bulletList',

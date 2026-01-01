@@ -104,6 +104,19 @@ spring:
                   args:
                     regexp: /api-docs/page
                     replacement: /v3/api-docs
+            - id: collaboration-service-route
+              uri: ws://ckw-collaboration-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /collaboration/**
+              filters:
+                - name: StripPrefix
+                  args:
+                    part: 1
+                - name: JwtValidation
+
           globalcors:
             cors-configurations:
               "[/**]":
@@ -117,6 +130,9 @@ spring:
                             - PATCH
                           allowedHeaders: "*"
                           allowCredentials: true
+          httpclient:
+            websocket:
+              max-frame-payload-length: 65536
 server:
   port: 8080
 logging:

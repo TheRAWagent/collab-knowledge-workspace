@@ -1,75 +1,66 @@
-# React + TypeScript + Vite
+# CKW Frontend (UI)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive React-based interface for the Collaborative Knowledge Workspace.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Collaborative Editor**: Full-featured rich text editor with real-time sync (TipTap + Yjs).
+- **Workspace Explorer**: Manage workspaces, folders, and documents.
+- **Dynamic Routing**: Type-safe routing using TanStack Router.
+- **Data Querying**: Efficient data fetching and caching with TanStack Query.
+- **Theming**: Sleek UI built with Tailwind CSS and Radix UI primitives.
+- **Authentication**: Secure login/registration flows integrated with Auth Service.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **React 18+**
+- **Vite**
+- **TypeScript**
+- **TanStack Router**
+- **TanStack Query**
+- **TipTap** (Editor)
+- **Tailwind CSS**
+- **Lucide React** (Icons)
 
-Note: This will impact Vite dev & build performances.
+## Getting Started
 
-## Expanding the ESLint configuration
+### Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js 18+
+- pnpm or npm
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm run dev
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The app will be available at `http://localhost:5173`.
+
+### Build
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+- `src/components`: Reusable UI components (Shared).
+- `src/modules`: Feature-specific logic and components (Auth, Workspaces, Pages).
+- `src/hooks`: Custom React hooks for data fetching and state.
+- `src/routes`: Route definitions for TanStack Router.
+
+## Environment Variables
+
+Create a `.env` file in the root:
+
+```env
+VITE_API_GATEWAY_URL=http://localhost:8080
+VITE_COLLAB_SERVICE_URL=ws://localhost:8081
 ```

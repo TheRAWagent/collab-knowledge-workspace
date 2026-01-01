@@ -1,49 +1,36 @@
 package com.dj.ckw.apigateway.filter;
 
+import com.dj.ckw.apigateway.service.HttpAuthHandler;
+import com.dj.ckw.apigateway.service.WebSocketAuthHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 public class JwtValidationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
-    private final WebClient webClient;
+    private final WebSocketAuthHandler webSocketAuthHandler;
+    private final HttpAuthHandler httpAuthHandler;
 
-    public JwtValidationGatewayFilterFactory(WebClient.Builder webClientBuilder, @Value("${auth.service.url}") String authServiceUrl) {
-        this.webClient = webClientBuilder.baseUrl(authServiceUrl).build();
+    public JwtValidationGatewayFilterFactory(WebClient.Builder webClientBuilder, @Value("${auth.service.url}") String authServiceUrl, WebSocketAuthHandler webSocketAuthHandler, HttpAuthHandler httpAuthHandler) {
+        this.webSocketAuthHandler = webSocketAuthHandler;
+        this.httpAuthHandler = httpAuthHandler;
     }
 
     @Override
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
-            String token = exchange.getRequest().getCookies().getFirst("token").getValue();
+            boolean isWebSocket =
+                    exchange.getRequest().getHeaders()
+                            .getFirst(HttpHeaders.UPGRADE) != null;
 
-            if (token.isEmpty()) {
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
+            if (isWebSocket) {
+                return webSocketAuthHandler.handle(exchange, chain);
             }
 
-            return webClient.get().uri("/validate").header(HttpHeaders.AUTHORIZATION, token)
-                .retrieve()
-                .bodyToMono(java.util.Map.class)
-                .flatMap(body -> {
-                    Object t = body.get("userContext");
-                    if (t == null) {
-                        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                        return exchange.getResponse().setComplete();
-                    }
-                    String userToken = t.toString();
-                    var mutatedRequest = exchange.getRequest().mutate().header("X-User-Info", userToken).build();
-                    var mutatedExchange = exchange.mutate().request(mutatedRequest).build();
-                    return chain.filter(mutatedExchange);
-                })
-                .onErrorResume(e -> {
-                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                    return exchange.getResponse().setComplete();
-                });
+            return httpAuthHandler.handle(exchange, chain);
         };
     }
 }
