@@ -2,7 +2,6 @@ package com.dj.ckw.pageservice.controller;
 
 import com.dj.ckw.pageservice.dto.BlockSnapshotRequest;
 import com.dj.ckw.pageservice.dto.SnapshotResponse;
-import com.dj.ckw.pageservice.model.Snapshot;
 import com.dj.ckw.pageservice.service.impl.SnapshotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

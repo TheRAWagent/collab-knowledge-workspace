@@ -2,7 +2,7 @@ package com.dj.ckw.pageservice.service.impl;
 
 import com.dj.ckw.pageservice.dto.BlockSnapshotRequest;
 import com.dj.ckw.pageservice.dto.SnapshotResponse;
-import com.dj.ckw.pageservice.model.Snapshot;
+import com.dj.ckw.pageservice.model.SnapshotEntity;
 import com.dj.ckw.pageservice.repository.SnapshotRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,15 +58,15 @@ public class SnapshotService {
                     .switchIfEmpty(
                             // INSERT CASE
                             Mono.defer(() -> {
-                                        Snapshot snapshot = new Snapshot();
-                                        snapshot.setDocumentId(documentId);
-                                        snapshot.setVersion((long) req.getVersion());
-                                        snapshot.setSchemaVersion((long) req.getSchemaVersion());
-                                        snapshot.setGeneratedAt(req.getGeneratedAt());
-                                        snapshot.setUpdatedBy(req.getUpdatedBy());
-                                        snapshot.setSource(req.getSource());
-                                        snapshot.setContentJson(Json.of(finalContentJson));
-                                        return snapshotRepository.save(snapshot);
+                                        SnapshotEntity snapshotEntity = new SnapshotEntity();
+                                        snapshotEntity.setDocumentId(documentId);
+                                        snapshotEntity.setVersion((long) req.getVersion());
+                                        snapshotEntity.setSchemaVersion((long) req.getSchemaVersion());
+                                        snapshotEntity.setGeneratedAt(req.getGeneratedAt());
+                                        snapshotEntity.setUpdatedBy(req.getUpdatedBy());
+                                        snapshotEntity.setSource(req.getSource());
+                                        snapshotEntity.setContentJson(Json.of(finalContentJson));
+                                        return snapshotRepository.save(snapshotEntity);
                                     }
                             )
                     )

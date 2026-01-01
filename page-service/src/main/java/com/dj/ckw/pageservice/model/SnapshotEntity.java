@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Snapshot {
+public class SnapshotEntity {
     @Id
     private UUID id;
 

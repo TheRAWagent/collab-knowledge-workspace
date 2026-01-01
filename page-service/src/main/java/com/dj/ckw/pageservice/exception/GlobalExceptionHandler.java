@@ -18,8 +18,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(404).body(Map.of("error", ex.getMessage()));
     }
 
-    @ExceptionHandler(PageNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handlePageNotFoundException(PageNotFoundException ex) {
+    @ExceptionHandler(DocumentNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlePageNotFoundException(DocumentNotFoundException ex) {
         return ResponseEntity.status(404).body(Map.of("error", ex.getMessage()));
     }
 

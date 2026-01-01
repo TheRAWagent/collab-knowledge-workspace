@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class PageResponse {
+public class DocumentResponse {
     @NotNull
     private UUID id;
 
@@ -33,8 +33,8 @@ public class PageResponse {
     @NotNull
     private LocalDateTime updatedAt;
 
-    public static PageResponse create(DocumentEntity documentEntity) {
-        return PageResponse.builder()
+    public static DocumentResponse create(DocumentEntity documentEntity) {
+        return DocumentResponse.builder()
                 .id(documentEntity.getId())
                 .workspaceId(documentEntity.getWorkspaceId())
                 .title(documentEntity.getTitle())
