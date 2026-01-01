@@ -85,7 +85,7 @@ spring:
                 - name: Path
                   args:
                     patterns:
-                      - /workspace/{workspace_id}/pages/**
+                      - /workspace/{workspace_id}/documents/**
               filters:
                 - name: JwtValidation
                 - name: PageAccessValidation

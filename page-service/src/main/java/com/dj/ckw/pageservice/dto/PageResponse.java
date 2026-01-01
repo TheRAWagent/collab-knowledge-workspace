@@ -1,6 +1,6 @@
 package com.dj.ckw.pageservice.dto;
 
-import com.dj.ckw.pageservice.model.Page;
+import com.dj.ckw.pageservice.model.DocumentEntity;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,14 +33,14 @@ public class PageResponse {
     @NotNull
     private LocalDateTime updatedAt;
 
-    public static PageResponse create(Page page) {
+    public static PageResponse create(DocumentEntity documentEntity) {
         return PageResponse.builder()
-                .id(page.getId())
-                .workspaceId(page.getWorkspaceId())
-                .title(page.getTitle())
-                .icon(page.getIcon())
-                .createdAt(page.getCreatedAt())
-                .updatedAt(page.getUpdatedAt())
+                .id(documentEntity.getId())
+                .workspaceId(documentEntity.getWorkspaceId())
+                .title(documentEntity.getTitle())
+                .icon(documentEntity.getIcon())
+                .createdAt(documentEntity.getCreatedAt())
+                .updatedAt(documentEntity.getUpdatedAt())
                 .build();
     }
 }

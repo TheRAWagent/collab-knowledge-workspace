@@ -1,7 +1,6 @@
 package com.dj.ckw.pageservice.controller;
 
-import com.dj.ckw.pageservice.dto.PageRequest;
-import com.dj.ckw.pageservice.dto.PageResponse;
+import com.dj.ckw.pageservice.dto.*;
 import com.dj.ckw.pageservice.dto.validation.CreatePageValidationGroup;
 import com.dj.ckw.pageservice.dto.validation.UpdatePageValidationGroup;
 import com.dj.ckw.pageservice.service.PageService;
@@ -18,7 +17,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/{workspaceId}/pages")
+@RequestMapping("/{workspaceId}/documents")
 public class PageController {
 
     private final PageService pageService;

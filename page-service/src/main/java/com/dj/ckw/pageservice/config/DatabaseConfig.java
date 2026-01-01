@@ -19,7 +19,6 @@ public class DatabaseConfig {
                         r2dbcProperties.getPassword()
                 )
                 .locations(flywayProperties.getLocations().toArray(String[]::new))
-                .baselineOnMigrate(true)
                 .load();
     }
 }

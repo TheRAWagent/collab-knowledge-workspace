@@ -17,15 +17,22 @@ public class WorkspaceAccessFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         HttpMethod method = exchange.getRequest().getMethod();
         String accessHeader = exchange.getRequest().getHeaders().getFirst(AUTHORIZATION_HEADER);
-        System.out.println(accessHeader);
         if(exchange.getRequest().getPath().toString().endsWith("/v3/api-docs")){
             // Always allow api docs access
+            return chain.filter(exchange);
+        } else if(exchange.getRequest().getPath().toString().contains("swagger")){
+            // Always allow swagger ui access
             return chain.filter(exchange);
         }
 
         if (accessHeader == null) {
             exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
             return exchange.getResponse().setComplete();
+        }
+
+        if("INTERNAL".equals(accessHeader)){
+            // Always allow internal service access
+            return chain.filter(exchange);
         }
 
         // Always allow GET

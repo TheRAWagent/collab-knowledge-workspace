@@ -9,15 +9,13 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name = "pages")
+@Table(name = "documents")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-public class Page {
+@Data
+public class DocumentEntity {
     @Id
-    @Generated
     private UUID id;
 
     private UUID workspaceId;
@@ -25,6 +23,11 @@ public class Page {
     private String title;
 
     private String icon;
+
+    /**
+     * Optimistic version
+     */
+    private int version;
 
     @CreatedDate
     private LocalDateTime createdAt;

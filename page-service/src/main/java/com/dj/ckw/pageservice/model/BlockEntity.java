@@ -1,6 +1,6 @@
 package com.dj.ckw.pageservice.model;
 
-import com.dj.ckw.pageservice.enums.BlockType;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,28 +20,33 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Block {
+public class BlockEntity {
     @Id
     private UUID id;
 
-    @Column("page_id")
+    @Column("document_id")
     @NotNull
-    private UUID pageId;
+    private UUID documentId;
 
     @Column("parent_id")
     private UUID parentId;   // null = root-level block
 
-    private BlockType type;
-
-    @Column("content_json")
-    private String contentJson; // rich JSON content (TipTap style)
-
     @Column("order_index")
-    private Integer orderIndex;
+    private Long orderIndex;
 
+    @Column("type")
+    private String type;
+
+    private JsonNode attrs; // additional attributes as JSON
+
+    @Column("text")
+    private String text;
+
+    @Column("created_at")
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @Column("updated_at")
     @LastModifiedDate
     private LocalDateTime updatedAt;
 }
