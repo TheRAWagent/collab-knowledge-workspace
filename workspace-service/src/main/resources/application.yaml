@@ -4,3 +4,6 @@ spring:
   threads:
     virtual:
       enabled: true
+server:
+  tomcat:
+    basedir: /app/tomcat-temp
