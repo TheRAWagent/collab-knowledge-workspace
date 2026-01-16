@@ -1,0 +1,4 @@
+ALTER TABLE email_verifications
+    ALTER COLUMN created_at TYPE TIMESTAMPTZ,
+    ALTER COLUMN created_at SET DEFAULT NOW(),
+    ALTER COLUMN expires_at TYPE TIMESTAMPTZ;

@@ -25,18 +25,34 @@ extra["springGrpcVersion"] = "0.12.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.grpc:grpc-services")
-    implementation("org.springframework.grpc:spring-grpc-server-web-spring-boot-starter")
+    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    testImplementation("org.springframework.security:spring-security-test")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    runtimeOnly("org.postgresql:postgresql")
+    implementation("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+    implementation(platform("software.amazon.awssdk:bom:2.41.4"))
+    implementation("software.amazon.awssdk:sesv2")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.83")
+    implementation("io.grpc:grpc-netty-shaded")
+    modules {
+        module("io.grpc:grpc-netty") {
+            replacedBy(
+                "io.grpc:grpc-netty-shaded",
+                "Use Netty shaded instead of regular Netty"
+            )
+        }
+    }
 }
 
 dependencyManagement {

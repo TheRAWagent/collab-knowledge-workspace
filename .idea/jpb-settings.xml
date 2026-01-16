@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DatabaseMigrationSettings" lastSelectedDirectory="$PROJECT_DIR$/user-service/src/main/resources/db/migrations">
+    <database-infos>
+      <database-info>
+        <dbms-id>postgres</dbms-id>
+        <mapping-types>
+          <mapping-type sql-type-parameter="Length">
+            <java-class>org.postgresql.util.PGobject</java-class>
+            <sql-type>jsonb</sql-type>
+          </mapping-type>
+          <mapping-type sql-type-parameter="Nothing">
+            <java-class>com.fasterxml.jackson.databind.JsonNode</java-class>
+            <sql-type>jsonb</sql-type>
+          </mapping-type>
+        </mapping-types>
+      </database-info>
+    </database-infos>
+  </component>
+</project>

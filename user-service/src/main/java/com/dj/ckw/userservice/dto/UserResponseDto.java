@@ -4,11 +4,21 @@ public class UserResponseDto {
     private String name;
     private String email;
     private String avatarUrl;
+    private Boolean verified;
 
-    public UserResponseDto(String name, String email, String avatarUrl) {
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
+    public UserResponseDto(String name, String email, String avatarUrl, Boolean verified) {
         this.name = name;
         this.email = email;
         this.avatarUrl = avatarUrl;
+        this.verified = verified;
     }
 
     public String getName() {

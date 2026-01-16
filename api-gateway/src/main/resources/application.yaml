@@ -15,6 +15,7 @@ spring:
                       - /auth/login
                       - /auth/register
                       - /auth/verify
+                      - /auth/logout
               filters:
                 - name: StripPrefix
                   args:
@@ -31,7 +32,23 @@ spring:
                   args:
                     regexp: /api-docs/auth
                     replacement: /v3/api-docs
-            - id: user-service-route
+            - id: user-service-public-routes
+              uri: http://ckw-user-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /user
+                      - /user/verify-email
+                - name: Method
+                  args:
+                    methods:
+                    - POST
+              filters:
+                - name: StripPrefix
+                  args:
+                    part: 1
+            - id: user-service-private-routes
               uri: http://ckw-user-service:8080
               predicates:
                 - name: Path

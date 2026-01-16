@@ -1,0 +1,15 @@
+syntax="proto3";
+option java_multiple_files=true;
+option java_package="com.dj.ckw.userservice.grpc";
+
+message UserIdentityConfirmationRequest {
+  string email = 1;
+}
+
+message UserIdentityConfirmationResponse {
+  bool is_confirmed = 1;
+}
+
+service UserIdentityConfirmationService {
+  rpc confirmUserIdentity(UserIdentityConfirmationRequest) returns (UserIdentityConfirmationResponse);
+}

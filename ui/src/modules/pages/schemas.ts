@@ -6,6 +6,31 @@
  */
 import * as zod from 'zod';
 
+export const getSnapshotParams = zod.object({
+  "documentId": zod.string().uuid()
+})
+
+
+export const saveSnapshotParams = zod.object({
+  "documentId": zod.string().uuid()
+})
+
+export const saveSnapshotBody = zod.object({
+  "version": zod.number().optional(),
+  "schemaVersion": zod.number().optional(),
+  "generatedAt": zod.string().datetime({}).optional(),
+  "updatedBy": zod.string().uuid().optional(),
+  "source": zod.string().optional(),
+  "content": zod.object({
+  "type": zod.string(),
+  "content": zod.array(zod.unknown()).optional(),
+  "attrs": zod.string().optional(),
+  "marks": zod.string().optional(),
+  "text": zod.string().optional()
+}).optional()
+})
+
+
 export const getPagesParams = zod.object({
   "workspaceId": zod.string().uuid()
 })
@@ -21,23 +46,6 @@ export const createPageParams = zod.object({
 export const createPageBody = zod.object({
   "title": zod.string().min(1),
   "icon": zod.string().optional()
-})
-
-
-export const snapshotParams = zod.object({
-  "documentId": zod.string().uuid()
-})
-
-export const snapshotBody = zod.object({
-  "version": zod.number().optional(),
-  "blocks": zod.array(zod.object({
-    "id": zod.string().uuid().optional(),
-    "parentId": zod.string().uuid().optional(),
-    "type": zod.string().optional(),
-    "position": zod.string().optional(),
-    "content": zod.unknown().optional(),
-    "attrs": zod.unknown().optional()
-  })).optional()
 })
 
 
@@ -64,10 +72,4 @@ export const updatePageParams = zod.object({
 export const updatePageBody = zod.object({
   "title": zod.string().min(1),
   "icon": zod.string().optional()
-})
-
-
-export const getTreeParams = zod.object({
-  "id": zod.string().uuid(),
-  "workspaceId": zod.string()
 })

@@ -7,17 +7,6 @@
 import * as zod from 'zod';
 
 /**
- * @summary Verify user using code
- */
-
-
-
-export const verifyUserBody = zod.object({
-  "email": zod.string().email().min(1)
-})
-
-
-/**
  * @summary Register user using email/password
  */
 

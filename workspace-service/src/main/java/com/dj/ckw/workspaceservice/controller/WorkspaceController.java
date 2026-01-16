@@ -2,7 +2,6 @@ package com.dj.ckw.workspaceservice.controller;
 
 import com.dj.ckw.workspaceservice.dto.*;
 import com.dj.ckw.workspaceservice.model.RequestInfo;
-import com.dj.ckw.workspaceservice.model.WorkspaceMember;
 import com.dj.ckw.workspaceservice.service.WorkspaceService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController

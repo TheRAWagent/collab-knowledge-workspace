@@ -2,10 +2,11 @@ package com.dj.ckw.authservice.controller;
 
 import com.dj.ckw.authservice.dto.IntrospectionResponse;
 import com.dj.ckw.authservice.dto.AuthRequestDto;
-import com.dj.ckw.authservice.dto.UserVerificationRequestDto;
 import com.dj.ckw.authservice.dto.validators.CreateUserValidationGroup;
 import com.dj.ckw.authservice.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.groups.Default;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,13 +49,6 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Verify user using code")
-    @PostMapping("/verify")
-    public ResponseEntity<Void> verifyUser(@RequestBody @Validated UserVerificationRequestDto userVerificationRequestDto) {
-        authService.verifyUser(userVerificationRequestDto);
-        return ResponseEntity.ok().build();
-    }
-
     @Operation(summary = "Validate Token")
     @GetMapping("/validate")
     public ResponseEntity<IntrospectionResponse> validateToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -65,5 +59,19 @@ public class AuthController {
         String encodedContext = authService.validateToken(authHeader);
 
         return ResponseEntity.ok(new IntrospectionResponse(encodedContext));
+    }
+
+    @Operation(
+            summary = "Logout",
+            description = "Invalidates the session or token and logs the user out"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Logged out successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    @PostMapping("/logout")
+    public void logout() {
+        // Intentionally left blank
+        // Spring Security will handle the logout by clearing the cookie
     }
 }

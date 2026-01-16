@@ -1,7 +1,5 @@
 package com.dj.ckw.authservice.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -9,6 +7,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -20,12 +20,12 @@ import java.util.Map;
 @Component
 public class JwtUtil {
     private final Key secretKey;
-    private final ObjectMapper jacksonObjectMapper;
+    private final JsonMapper objectMapper;
 
-    public JwtUtil(@Value("${jwt.secret}") String secretKey, ObjectMapper jacksonObjectMapper) {
+    public JwtUtil(@Value("${jwt.secret}") String secretKey, JsonMapper objectMapper) {
         byte[] keyBytes = Base64.getDecoder().decode(secretKey.getBytes(StandardCharsets.UTF_8));
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-        this.jacksonObjectMapper = jacksonObjectMapper;
+        this.objectMapper = objectMapper;
     }
 
     public String generateToken(String email) {
@@ -40,7 +40,7 @@ public class JwtUtil {
     public String validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().verifyWith((SecretKey) secretKey).build().parseSignedClaims(token);
-            String json = jacksonObjectMapper.writeValueAsString(Map.of(
+            String json = objectMapper.writeValueAsString(Map.of(
                     "id", claims.getPayload().getSubject(),
                     "iat", claims.getPayload().getIssuedAt().getTime(),
                     "exp", claims.getPayload().getExpiration().getTime()
@@ -49,7 +49,7 @@ public class JwtUtil {
             return Base64.getUrlEncoder().withoutPadding().encodeToString(json.getBytes(StandardCharsets.UTF_8));
         } catch (JwtException e) {
             throw new JwtException("Invalid JWT token");
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }

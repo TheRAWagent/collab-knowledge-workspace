@@ -4,6 +4,8 @@ spring:
   threads:
     virtual:
       enabled: true
+  flyway:
+    locations: classpath:db/migration
 server:
   tomcat:
     basedir: /app/tomcat-temp

@@ -30,11 +30,6 @@ import type {
   AxiosResponse
 } from 'axios';
 
-export interface UserVerificationRequestDto {
-  /** @minLength 1 */
-  email: string;
-}
-
 export interface AuthRequestDto {
   /** @minLength 1 */
   email: string;
@@ -49,68 +44,6 @@ export interface IntrospectionResponse {
   userContext?: string;
 }
 
-/**
- * @summary Verify user using code
- */
-export const verifyUser = (
-    userVerificationRequestDto: UserVerificationRequestDto, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<void>> => {
-    
-    
-    return axios.default.post(
-      `http://localhost:8080/auth/verify`,
-      userVerificationRequestDto,options
-    );
-  }
-
-
-
-export const getVerifyUserMutationOptions = <TError = AxiosError<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof verifyUser>>, TError,{data: UserVerificationRequestDto}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof verifyUser>>, TError,{data: UserVerificationRequestDto}, TContext> => {
-
-const mutationKey = ['verifyUser'];
-const {mutation: mutationOptions, axios: axiosOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, axios: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof verifyUser>>, {data: UserVerificationRequestDto}> = (props) => {
-          const {data} = props ?? {};
-
-          return  verifyUser(data,axiosOptions)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type VerifyUserMutationResult = NonNullable<Awaited<ReturnType<typeof verifyUser>>>
-    export type VerifyUserMutationBody = UserVerificationRequestDto
-    export type VerifyUserMutationError = AxiosError<unknown>
-
-    /**
- * @summary Verify user using code
- */
-export const useVerifyUser = <TError = AxiosError<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof verifyUser>>, TError,{data: UserVerificationRequestDto}, TContext>, axios?: AxiosRequestConfig}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof verifyUser>>,
-        TError,
-        {data: UserVerificationRequestDto},
-        TContext
-      > => {
-
-      const mutationOptions = getVerifyUserMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
 /**
  * @summary Register user using email/password
  */
@@ -169,6 +102,68 @@ export const useCreateUser = <TError = AxiosError<unknown>,
       > => {
 
       const mutationOptions = getCreateUserMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * Invalidates the session or token and logs the user out
+ * @summary Logout
+ */
+export const logout = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.post(
+      `http://localhost:8080/auth/logout`,undefined,options
+    );
+  }
+
+
+
+export const getLogoutMutationOptions = <TError = AxiosError<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext> => {
+
+const mutationKey = ['logout'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logout>>, void> = () => {
+          
+
+          return  logout(axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LogoutMutationResult = NonNullable<Awaited<ReturnType<typeof logout>>>
+    
+    export type LogoutMutationError = AxiosError<void>
+
+    /**
+ * @summary Logout
+ */
+export const useLogout = <TError = AxiosError<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof logout>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getLogoutMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }

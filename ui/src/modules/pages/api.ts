@@ -30,13 +30,30 @@ import type {
   AxiosResponse
 } from 'axios';
 
-export interface PageRequest {
+export interface BlockDto {
+  type: string;
+  content?: BlockDto[];
+  attrs?: string;
+  marks?: string;
+  text?: string;
+}
+
+export interface BlockSnapshotRequest {
+  version?: number;
+  schemaVersion?: number;
+  generatedAt?: string;
+  updatedBy?: string;
+  source?: string;
+  content?: BlockDto;
+}
+
+export interface DocumentRequest {
   /** @minLength 1 */
   title: string;
   icon?: string;
 }
 
-export interface PageResponse {
+export interface DocumentResponse {
   id: string;
   workspaceId: string;
   title: string;
@@ -45,42 +62,160 @@ export interface PageResponse {
   updatedAt: string;
 }
 
-export interface BlockDto {
-  id?: string;
-  parentId?: string;
-  type?: string;
-  position?: string;
-  content?: JsonNode;
-  attrs?: JsonNode;
-}
-
-export interface BlockSnapshotRequest {
+export interface SnapshotResponse {
   version?: number;
-  blocks?: BlockDto[];
+  schemaVersion?: number;
+  generatedAt?: string;
+  updatedBy?: string;
+  source?: string;
+  contentJson?: string;
 }
 
-export interface JsonNode {}
+export const getSnapshot = (
+    documentId: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<SnapshotResponse>> => {
+    
+    
+    return axios.default.get(
+      `http://localhost:8080/workspace/internal/documents/${documentId}/snapshot`,options
+    );
+  }
 
-export interface BlockTreeNodeDto {
-  id?: string;
-  parentId?: string;
-  type?: string;
-  position?: string;
-  content?: JsonNode;
-  attrs?: JsonNode;
-  /** Child blocks */
-  children?: BlockTreeNodeDto;
+
+
+
+export const getGetSnapshotQueryKey = (documentId?: string,) => {
+    return [
+    `http://localhost:8080/workspace/internal/documents/${documentId}/snapshot`
+    ] as const;
+    }
+
+    
+export const getGetSnapshotQueryOptions = <TData = Awaited<ReturnType<typeof getSnapshot>>, TError = AxiosError<string>>(documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSnapshot>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSnapshotQueryKey(documentId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSnapshot>>> = ({ signal }) => getSnapshot(documentId, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(documentId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSnapshot>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export interface DocumentTreeResponse {
-  documentId?: string;
-  version?: number;
-  blocks?: BlockTreeNodeDto[];
+export type GetSnapshotQueryResult = NonNullable<Awaited<ReturnType<typeof getSnapshot>>>
+export type GetSnapshotQueryError = AxiosError<string>
+
+
+export function useGetSnapshot<TData = Awaited<ReturnType<typeof getSnapshot>>, TError = AxiosError<string>>(
+ documentId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSnapshot>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSnapshot>>,
+          TError,
+          Awaited<ReturnType<typeof getSnapshot>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSnapshot<TData = Awaited<ReturnType<typeof getSnapshot>>, TError = AxiosError<string>>(
+ documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSnapshot>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSnapshot>>,
+          TError,
+          Awaited<ReturnType<typeof getSnapshot>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSnapshot<TData = Awaited<ReturnType<typeof getSnapshot>>, TError = AxiosError<string>>(
+ documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSnapshot>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetSnapshot<TData = Awaited<ReturnType<typeof getSnapshot>>, TError = AxiosError<string>>(
+ documentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSnapshot>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetSnapshotQueryOptions(documentId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
 }
 
+
+
+
+
+export const saveSnapshot = (
+    documentId: string,
+    blockSnapshotRequest: BlockSnapshotRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.put(
+      `http://localhost:8080/workspace/internal/documents/${documentId}/snapshot`,
+      blockSnapshotRequest,options
+    );
+  }
+
+
+
+export const getSaveSnapshotMutationOptions = <TError = AxiosError<string>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveSnapshot>>, TError,{documentId: string;data: BlockSnapshotRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof saveSnapshot>>, TError,{documentId: string;data: BlockSnapshotRequest}, TContext> => {
+
+const mutationKey = ['saveSnapshot'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveSnapshot>>, {documentId: string;data: BlockSnapshotRequest}> = (props) => {
+          const {documentId,data} = props ?? {};
+
+          return  saveSnapshot(documentId,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SaveSnapshotMutationResult = NonNullable<Awaited<ReturnType<typeof saveSnapshot>>>
+    export type SaveSnapshotMutationBody = BlockSnapshotRequest
+    export type SaveSnapshotMutationError = AxiosError<string>
+
+    export const useSaveSnapshot = <TError = AxiosError<string>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveSnapshot>>, TError,{documentId: string;data: BlockSnapshotRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof saveSnapshot>>,
+        TError,
+        {documentId: string;data: BlockSnapshotRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getSaveSnapshotMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
 export const getPages = (
     workspaceId: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<PageResponse[]>> => {
+ ): Promise<AxiosResponse<DocumentResponse[]>> => {
     
     
     return axios.default.get(
@@ -165,21 +300,21 @@ export function useGetPages<TData = Awaited<ReturnType<typeof getPages>>, TError
 
 export const createPage = (
     workspaceId: string,
-    pageRequest: PageRequest, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<PageResponse>> => {
+    documentRequest: DocumentRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<DocumentResponse>> => {
     
     
     return axios.default.post(
       `http://localhost:8080/workspace/${workspaceId}/documents`,
-      pageRequest,options
+      documentRequest,options
     );
   }
 
 
 
 export const getCreatePageMutationOptions = <TError = AxiosError<string>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPage>>, TError,{workspaceId: string;data: PageRequest}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof createPage>>, TError,{workspaceId: string;data: PageRequest}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPage>>, TError,{workspaceId: string;data: DocumentRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createPage>>, TError,{workspaceId: string;data: DocumentRequest}, TContext> => {
 
 const mutationKey = ['createPage'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
@@ -191,7 +326,7 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPage>>, {workspaceId: string;data: PageRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPage>>, {workspaceId: string;data: DocumentRequest}> = (props) => {
           const {workspaceId,data} = props ?? {};
 
           return  createPage(workspaceId,data,axiosOptions)
@@ -203,15 +338,15 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type CreatePageMutationResult = NonNullable<Awaited<ReturnType<typeof createPage>>>
-    export type CreatePageMutationBody = PageRequest
+    export type CreatePageMutationBody = DocumentRequest
     export type CreatePageMutationError = AxiosError<string>
 
     export const useCreatePage = <TError = AxiosError<string>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPage>>, TError,{workspaceId: string;data: PageRequest}, TContext>, axios?: AxiosRequestConfig}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPage>>, TError,{workspaceId: string;data: DocumentRequest}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createPage>>,
         TError,
-        {workspaceId: string;data: PageRequest},
+        {workspaceId: string;data: DocumentRequest},
         TContext
       > => {
 
@@ -220,67 +355,10 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
       return useMutation(mutationOptions, queryClient);
     }
     
-export const snapshot = (
-    documentId: string,
-    blockSnapshotRequest: BlockSnapshotRequest, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<void>> => {
-    
-    
-    return axios.default.post(
-      `http://localhost:8080/workspace/internal/documents/${documentId}/snapshot`,
-      blockSnapshotRequest,options
-    );
-  }
-
-
-
-export const getSnapshotMutationOptions = <TError = AxiosError<string>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof snapshot>>, TError,{documentId: string;data: BlockSnapshotRequest}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof snapshot>>, TError,{documentId: string;data: BlockSnapshotRequest}, TContext> => {
-
-const mutationKey = ['snapshot'];
-const {mutation: mutationOptions, axios: axiosOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, axios: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof snapshot>>, {documentId: string;data: BlockSnapshotRequest}> = (props) => {
-          const {documentId,data} = props ?? {};
-
-          return  snapshot(documentId,data,axiosOptions)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SnapshotMutationResult = NonNullable<Awaited<ReturnType<typeof snapshot>>>
-    export type SnapshotMutationBody = BlockSnapshotRequest
-    export type SnapshotMutationError = AxiosError<string>
-
-    export const useSnapshot = <TError = AxiosError<string>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof snapshot>>, TError,{documentId: string;data: BlockSnapshotRequest}, TContext>, axios?: AxiosRequestConfig}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof snapshot>>,
-        TError,
-        {documentId: string;data: BlockSnapshotRequest},
-        TContext
-      > => {
-
-      const mutationOptions = getSnapshotMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
 export const getPage = (
     workspaceId: string,
     pageId: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<PageResponse>> => {
+ ): Promise<AxiosResponse<DocumentResponse>> => {
     
     
     return axios.default.get(
@@ -428,21 +506,21 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 export const updatePage = (
     workspaceId: string,
     pageId: string,
-    pageRequest: PageRequest, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<PageResponse>> => {
+    documentRequest: DocumentRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<DocumentResponse>> => {
     
     
     return axios.default.patch(
       `http://localhost:8080/workspace/${workspaceId}/documents/${pageId}`,
-      pageRequest,options
+      documentRequest,options
     );
   }
 
 
 
 export const getUpdatePageMutationOptions = <TError = AxiosError<string>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePage>>, TError,{workspaceId: string;pageId: string;data: PageRequest}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof updatePage>>, TError,{workspaceId: string;pageId: string;data: PageRequest}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePage>>, TError,{workspaceId: string;pageId: string;data: DocumentRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updatePage>>, TError,{workspaceId: string;pageId: string;data: DocumentRequest}, TContext> => {
 
 const mutationKey = ['updatePage'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
@@ -454,7 +532,7 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePage>>, {workspaceId: string;pageId: string;data: PageRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePage>>, {workspaceId: string;pageId: string;data: DocumentRequest}> = (props) => {
           const {workspaceId,pageId,data} = props ?? {};
 
           return  updatePage(workspaceId,pageId,data,axiosOptions)
@@ -466,15 +544,15 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type UpdatePageMutationResult = NonNullable<Awaited<ReturnType<typeof updatePage>>>
-    export type UpdatePageMutationBody = PageRequest
+    export type UpdatePageMutationBody = DocumentRequest
     export type UpdatePageMutationError = AxiosError<string>
 
     export const useUpdatePage = <TError = AxiosError<string>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePage>>, TError,{workspaceId: string;pageId: string;data: PageRequest}, TContext>, axios?: AxiosRequestConfig}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePage>>, TError,{workspaceId: string;pageId: string;data: DocumentRequest}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updatePage>>,
         TError,
-        {workspaceId: string;pageId: string;data: PageRequest},
+        {workspaceId: string;pageId: string;data: DocumentRequest},
         TContext
       > => {
 
@@ -482,91 +560,3 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
       return useMutation(mutationOptions, queryClient);
     }
-    
-export const getTree = (
-    workspaceId: string,
-    id: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<DocumentTreeResponse>> => {
-    
-    
-    return axios.default.get(
-      `http://localhost:8080/workspace/${workspaceId}/documents/${id}/tree`,options
-    );
-  }
-
-
-
-
-export const getGetTreeQueryKey = (workspaceId?: string,
-    id?: string,) => {
-    return [
-    `http://localhost:8080/workspace/${workspaceId}/documents/${id}/tree`
-    ] as const;
-    }
-
-    
-export const getGetTreeQueryOptions = <TData = Awaited<ReturnType<typeof getTree>>, TError = AxiosError<string>>(workspaceId: string,
-    id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTree>>, TError, TData>>, axios?: AxiosRequestConfig}
-) => {
-
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetTreeQueryKey(workspaceId,id);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTree>>> = ({ signal }) => getTree(workspaceId,id, { signal, ...axiosOptions });
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(workspaceId && id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTree>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetTreeQueryResult = NonNullable<Awaited<ReturnType<typeof getTree>>>
-export type GetTreeQueryError = AxiosError<string>
-
-
-export function useGetTree<TData = Awaited<ReturnType<typeof getTree>>, TError = AxiosError<string>>(
- workspaceId: string,
-    id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTree>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTree>>,
-          TError,
-          Awaited<ReturnType<typeof getTree>>
-        > , 'initialData'
-      >, axios?: AxiosRequestConfig}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetTree<TData = Awaited<ReturnType<typeof getTree>>, TError = AxiosError<string>>(
- workspaceId: string,
-    id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTree>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTree>>,
-          TError,
-          Awaited<ReturnType<typeof getTree>>
-        > , 'initialData'
-      >, axios?: AxiosRequestConfig}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetTree<TData = Awaited<ReturnType<typeof getTree>>, TError = AxiosError<string>>(
- workspaceId: string,
-    id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTree>>, TError, TData>>, axios?: AxiosRequestConfig}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useGetTree<TData = Awaited<ReturnType<typeof getTree>>, TError = AxiosError<string>>(
- workspaceId: string,
-    id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTree>>, TError, TData>>, axios?: AxiosRequestConfig}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetTreeQueryOptions(workspaceId,id,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}

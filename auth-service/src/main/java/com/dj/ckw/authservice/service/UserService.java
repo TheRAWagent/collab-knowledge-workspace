@@ -18,13 +18,4 @@ public class UserService {
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
-    public void markUserAsVerified(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException(email);
-        }
-        user.get().setVerified(true);
-        userRepository.save(user.get());
-    }
 }

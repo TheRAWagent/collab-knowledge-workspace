@@ -1,4 +1,4 @@
-FROM dhi.io/gradle:9-jdk25-alpine3.22-dev AS builder
+FROM gradle:9.2.1-jdk25-ubi AS builder
 WORKDIR /home/gradle/project
 
 COPY build.gradle* build.gradle.kts* settings.gradle* settings.gradle.kts* gradle.properties* ./

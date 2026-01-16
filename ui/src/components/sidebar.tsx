@@ -8,6 +8,8 @@ import { useList, type WorkspaceResponse } from "@/modules/workspaces/api"
 import { useGetUser } from "@/modules/users/api"
 import { CreateWorkspaceDialog } from "@/modules/workspaces/components/create-workspace-dialog"
 import { Link } from "@tanstack/react-router"
+import { useLogout } from "@/modules/auth/api"
+import { useRouter } from "@tanstack/react-router"
 
 interface SidebarProps {
   open: boolean
@@ -15,11 +17,20 @@ interface SidebarProps {
 }
 
 export function Sidebar({ open, onOpenChange }: SidebarProps) {
+  const router = useRouter();
   const [expandedWorkspace, setExpandedWorkspace] = useState<string | null>(null);
   const { data: userResponse } = useGetUser();
   const { data: workspaceResponse } = useList({}, {});
   const [collapsed, setCollapsed] = useState(false);
   const [createWorkspaceDialogOpen, setCreateWorkspaceDialogOpen] = useState(false);
+
+  const logoutMutation = useLogout({
+    mutation: {
+      onSettled: () => {
+        router.navigate({ to: "/sign-in" });
+      }
+    }
+  });
 
   const isWorkspaceActive = (workspace: WorkspaceResponse) => expandedWorkspace === workspace.id;
 
@@ -144,7 +155,8 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
               {!collapsed && "New Workspace"}
             </button>
 
-            <button
+            <Link
+              to="/settings"
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent transition-colors",
                 collapsed && "h-10 w-10 justify-center p-0",
@@ -153,9 +165,10 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
             >
               <Settings className="h-4 w-4 shrink-0" />
               {!collapsed && "Settings"}
-            </button>
+            </Link>
 
             <button
+              onClick={() => logoutMutation.mutate()}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent transition-colors",
                 collapsed && "h-10 w-10 justify-center p-0",
