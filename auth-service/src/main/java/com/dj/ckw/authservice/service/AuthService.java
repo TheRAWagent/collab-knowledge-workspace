@@ -21,56 +21,71 @@ import java.util.Optional;
 
 @Service
 public class AuthService {
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
-    private final UserIdentityConfirmationServiceGrpc.UserIdentityConfirmationServiceBlockingV2Stub userIdentityConfirmationServiceStub;
-    private final Logger log = LoggerFactory.getLogger(AuthService.class);
+  private final UserService userService;
+  private final PasswordEncoder passwordEncoder;
+  private final JwtUtil jwtUtil;
+  private final UserRepository userRepository;
+  private final UserIdentityConfirmationServiceGrpc.UserIdentityConfirmationServiceBlockingV2Stub userIdentityConfirmationServiceStub;
+  private final Logger log = LoggerFactory.getLogger(AuthService.class);
 
-    public AuthService(
-            UserService userService,
-            PasswordEncoder passwordEncoder,
-            JwtUtil jwtUtil,
-            UserRepository userRepository,
-            @Value("${user.service.address}") String serverAddress,
-            @Value("${user.service.grpc.port:9090}") int port
-    ) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
-        log.info("Connecting to Workspace service grpc server at {}:{}", serverAddress, port);
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(serverAddress, port).usePlaintext().build();
-        this.userIdentityConfirmationServiceStub = UserIdentityConfirmationServiceGrpc.newBlockingV2Stub(channel);
+  public AuthService(
+      UserService userService,
+      PasswordEncoder passwordEncoder,
+      JwtUtil jwtUtil,
+      UserRepository userRepository,
+      @Value("${user.service.address}") String serverAddress,
+      @Value("${user.service.grpc.port:9090}") int port) {
+    this.userService = userService;
+    this.passwordEncoder = passwordEncoder;
+    this.jwtUtil = jwtUtil;
+    this.userRepository = userRepository;
+    log.info("Connecting to Workspace service grpc server at {}:{}", serverAddress, port);
+    ManagedChannel channel = ManagedChannelBuilder.forAddress(serverAddress, port).usePlaintext().build();
+    this.userIdentityConfirmationServiceStub = UserIdentityConfirmationServiceGrpc.newBlockingV2Stub(channel);
+  }
+
+  public Optional<String> authenticate(AuthRequestDto authRequestDto) {
+    log.info("Authenticating user: {}", authRequestDto.getEmail());
+    return userService.findByEmail(authRequestDto.getEmail())
+        .filter(user -> {
+          boolean match = passwordEncoder.matches(authRequestDto.getPassword(), user.getPassword());
+          if (!match) {
+            log.warn("Invalid password for user: {}", authRequestDto.getEmail());
+          }
+          return match;
+        })
+        .map(user -> {
+          log.info("User authenticated successfully: {}", authRequestDto.getEmail());
+          return jwtUtil.generateToken(user.getEmail());
+        });
+  }
+
+  @Cacheable(value = "users", key = "#token")
+  public String validateToken(String token) {
+    return jwtUtil.validateToken(token);
+  }
+
+  public void createUser(AuthRequestDto authRequestDto) {
+    log.info("Attempting to create user: {}", authRequestDto.getEmail());
+    try {
+      UserIdentityConfirmationResponse response = userIdentityConfirmationServiceStub.confirmUserIdentity(
+          UserIdentityConfirmationRequest.newBuilder().setEmail(authRequestDto.getEmail()).build());
+
+      if (response.getIsConfirmed()) {
+        User user = new User();
+        user.setEmail(authRequestDto.getEmail());
+        user.setPassword(passwordEncoder.encode(authRequestDto.getPassword()));
+        userRepository.save(user);
+        log.info("User created successfully: {}", authRequestDto.getEmail());
+      } else {
+        log.warn("User identity not confirmed by User Service: {}", authRequestDto.getEmail());
+        throw new UserNotFoundException("User with email " + authRequestDto.getEmail() + " not found in User Service");
+      }
+    } catch (UserNotFoundException e) {
+      throw e;
+    } catch (Exception e) {
+      log.error("Failed to create user: {}", authRequestDto.getEmail(), e);
+      throw new RuntimeException("Failed to create user: " + e.getMessage());
     }
-
-    public Optional<String> authenticate(AuthRequestDto authRequestDto) {
-        return userService.findByEmail(authRequestDto.getEmail())
-                .filter(user -> passwordEncoder.matches(authRequestDto.getPassword(), user.getPassword()))
-                .map(user -> jwtUtil.generateToken(user.getEmail()));
-    }
-
-    @Cacheable(value = "users", key = "#token")
-    public String validateToken(String token) {
-        return jwtUtil.validateToken(token);
-    }
-
-    public void createUser(AuthRequestDto authRequestDto) {
-        try {
-            UserIdentityConfirmationResponse response = userIdentityConfirmationServiceStub.confirmUserIdentity(UserIdentityConfirmationRequest.newBuilder().setEmail(authRequestDto.getEmail()).build());
-
-            if(response.getIsConfirmed()) {
-                User user = new User();
-                user.setEmail(authRequestDto.getEmail());
-                user.setPassword(passwordEncoder.encode(authRequestDto.getPassword()));
-                userRepository.save(user);
-            } else {
-                throw new UserNotFoundException("User with email " + authRequestDto.getEmail() + " not found in User Service");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create user: " + e.getMessage());
-
-        }
-    }
+  }
 }

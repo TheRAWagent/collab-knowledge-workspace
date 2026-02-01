@@ -15,6 +15,8 @@ import com.dj.ckw.userservice.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,127 +25,138 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
-    private final RequestInfo requestInfo;
-    private final DomainEventsRepository domainEventsRepository;
-    private final ObjectMapper objectMapper;
-    private final EmailVerificationsRepository emailVerificationsRepository;
-    private final OtpService otpService;
+  private static final Logger log = LoggerFactory.getLogger(UserService.class);
+  private final UserRepository userRepository;
+  private final RequestInfo requestInfo;
+  private final DomainEventsRepository domainEventsRepository;
+  private final ObjectMapper objectMapper;
+  private final EmailVerificationsRepository emailVerificationsRepository;
+  private final OtpService otpService;
 
-    public UserService(UserRepository userRepository, RequestInfo requestInfo, DomainEventsRepository domainEventsRepository, ObjectMapper objectMapper, EmailVerificationsRepository emailVerificationsRepository, OtpService otpService) {
-        this.userRepository = userRepository;
-        this.requestInfo = requestInfo;
-        this.domainEventsRepository = domainEventsRepository;
-        this.objectMapper = objectMapper;
-        this.emailVerificationsRepository = emailVerificationsRepository;
-        this.otpService = otpService;
+  public UserService(UserRepository userRepository, RequestInfo requestInfo,
+      DomainEventsRepository domainEventsRepository, ObjectMapper objectMapper,
+      EmailVerificationsRepository emailVerificationsRepository, OtpService otpService) {
+    this.userRepository = userRepository;
+    this.requestInfo = requestInfo;
+    this.domainEventsRepository = domainEventsRepository;
+    this.objectMapper = objectMapper;
+    this.emailVerificationsRepository = emailVerificationsRepository;
+    this.otpService = otpService;
+  }
+
+  public UserResponseDto getUser(String email) {
+    Optional<User> optionalUser = userRepository.findByEmail(email);
+
+    if (optionalUser.isEmpty()) {
+      throw new UserNotFoundException(email);
     }
 
-    public UserResponseDto getUser(String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+    User user = optionalUser.get();
 
-        if(optionalUser.isEmpty()) {
-            throw new UserNotFoundException(email);
-        }
+    return new UserResponseDto(user.getName(), user.getEmail(), user.getAvatarUrl(), user.getVerified());
+  }
 
-        User user = optionalUser.get();
+  @Transactional
+  public void createUser(CreateUserRequestDto createUserRequestDto) {
+    log.info("Creating user: {}", createUserRequestDto.getEmail());
+    Optional<User> userOptional = userRepository.findByEmail(createUserRequestDto.getEmail());
 
-        return new UserResponseDto(user.getName(), user.getEmail(), user.getAvatarUrl(), user.getVerified());
+    if (userOptional.isPresent()) {
+      throw new UserAlreadyExistsException(createUserRequestDto.getEmail());
     }
 
-    @Transactional
-    public void createUser(CreateUserRequestDto createUserRequestDto) {
-        Optional<User> userOptional = userRepository.findByEmail(createUserRequestDto.getEmail());
+    User user = new User(createUserRequestDto.getEmail(), null);
+    ObjectNode payload = objectMapper.createObjectNode();
+    payload.set("email", objectMapper.convertValue(user.getEmail(), JsonNode.class));
+    payload.set("purpose", objectMapper.convertValue("SIGNUP", JsonNode.class));
 
-        if(userOptional.isPresent()) {
-            throw new UserAlreadyExistsException(createUserRequestDto.getEmail());
-        }
+    DomainEvents event = new DomainEvents();
+    event.setEventType("EMAIL_VERIFICATION_REQUESTED");
+    event.setPayload(payload);
+    event.setEventStatus("PENDING");
+    domainEventsRepository.save(event);
 
-        User user = new User(createUserRequestDto.getEmail(), null);
-        System.out.println(createUserRequestDto.getEmail());
-        ObjectNode payload = objectMapper.createObjectNode();
-        payload.set("email", objectMapper.convertValue(user.getEmail(), JsonNode.class));
-        payload.set("purpose", objectMapper.convertValue("SIGNUP", JsonNode.class));
+    userRepository.save(user);
+    log.info("User created successfully: {}", createUserRequestDto.getEmail());
+  }
 
-        DomainEvents event = new DomainEvents();
-        event.setEventType("EMAIL_VERIFICATION_REQUESTED");
-        event.setPayload(payload);
-        event.setEventStatus("PENDING");
-        domainEventsRepository.save(event);
+  public UserResponseDto updateUser(UpdateUserRequestDto updateUserRequestDto) {
+    log.info("Updating user: {}", requestInfo.getEmail());
+    Optional<User> optionalUser = userRepository.findByEmail(requestInfo.getEmail());
 
-        userRepository.save(user);
+    if (optionalUser.isEmpty()) {
+      throw new UserNotFoundException(requestInfo.getEmail());
     }
 
-    public UserResponseDto updateUser(UpdateUserRequestDto updateUserRequestDto) {
-        Optional<User> optionalUser = userRepository.findByEmail(requestInfo.getEmail());
-
-        if(optionalUser.isEmpty()) {
-            throw new UserNotFoundException(requestInfo.getEmail());
-        }
-
-        User user = optionalUser.get();
-        if(updateUserRequestDto.getName()!=null) {
-            user.setName(updateUserRequestDto.getName());
-        }
-
-//        More update fields to be added later
-
-        userRepository.save(user);
-
-        return  new UserResponseDto(user.getName(), user.getEmail(), user.getAvatarUrl(), user.getVerified());
+    User user = optionalUser.get();
+    if (updateUserRequestDto.getName() != null) {
+      user.setName(updateUserRequestDto.getName());
     }
 
-    public void verifyEmail(String email, String code) {
-        Optional<EmailVerifications> verification = emailVerificationsRepository.findByEmail(email);
+    // More update fields to be added later
 
-        if(verification.isEmpty()) {
-            throw new UserNotFoundException(email);
-        }
+    userRepository.save(user);
 
-        EmailVerifications emailVerification = verification.get();
+    return new UserResponseDto(user.getName(), user.getEmail(), user.getAvatarUrl(), user.getVerified());
+  }
 
-        if(emailVerification.getAttempts()>= emailVerification.getMaxAttempts()){
-            throw new IllegalArgumentException("Maximum verification attempts exceeded, please request a new code");
-        }
+  public void verifyEmail(String email, String code) {
+    log.info("Verifying email: {}", email);
+    Optional<EmailVerifications> verification = emailVerificationsRepository.findByEmail(email);
 
-        if(emailVerification.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Verification code has expired");
-        }
-
-        if(!otpService.matches(code, emailVerification.getOtpHash())){
-            emailVerification.setAttempts(emailVerification.getAttempts()+1);
-            throw new IllegalArgumentException("Invalid verification code");
-        }
-
-        Optional<User> user = userRepository.findByEmail(email);
-
-        if(user.isEmpty()) {
-            throw new UserNotFoundException(email);
-        }
-
-        User existingUser = user.get();
-
-        existingUser.setVerified(true);
-
-        userRepository.save(existingUser);
+    if (verification.isEmpty()) {
+      throw new UserNotFoundException(email);
     }
 
-    @Transactional
-    public void resendVerification(String email) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
+    EmailVerifications emailVerification = verification.get();
 
-        if(userOptional.isEmpty()) {
-            throw new UserNotFoundException(email);
-        }
-
-        ObjectNode payload = objectMapper.createObjectNode();
-        payload.set("email", objectMapper.convertValue(email, JsonNode.class));
-        payload.set("purpose", objectMapper.convertValue("SIGNUP", JsonNode.class));
-
-        DomainEvents event = new DomainEvents();
-        event.setEventType("RESEND_EMAIL_VERIFICATION_OTP_REQUESTED");
-        event.setPayload(payload);
-        event.setEventStatus("PENDING");
-        domainEventsRepository.save(event);
+    if (emailVerification.getAttempts() >= emailVerification.getMaxAttempts()) {
+      log.warn("Max verification attempts exceeded for email: {}", email);
+      throw new IllegalArgumentException("Maximum verification attempts exceeded, please request a new code");
     }
+
+    if (emailVerification.getExpiresAt().isBefore(LocalDateTime.now())) {
+      log.warn("Verification code expired for email: {}", email);
+      throw new IllegalArgumentException("Verification code has expired");
+    }
+
+    if (!otpService.matches(code, emailVerification.getOtpHash())) {
+      emailVerification.setAttempts(emailVerification.getAttempts() + 1);
+      log.warn("Invalid verification code for email: {}", email);
+      throw new IllegalArgumentException("Invalid verification code");
+    }
+
+    Optional<User> user = userRepository.findByEmail(email);
+
+    if (user.isEmpty()) {
+      throw new UserNotFoundException(email);
+    }
+
+    User existingUser = user.get();
+
+    existingUser.setVerified(true);
+
+    userRepository.save(existingUser);
+    log.info("Email verified successfully: {}", email);
+  }
+
+  @Transactional
+  public void resendVerification(String email) {
+    log.info("Resending verification for email: {}", email);
+    Optional<User> userOptional = userRepository.findByEmail(email);
+
+    if (userOptional.isEmpty()) {
+      throw new UserNotFoundException(email);
+    }
+
+    ObjectNode payload = objectMapper.createObjectNode();
+    payload.set("email", objectMapper.convertValue(email, JsonNode.class));
+    payload.set("purpose", objectMapper.convertValue("SIGNUP", JsonNode.class));
+
+    DomainEvents event = new DomainEvents();
+    event.setEventType("RESEND_EMAIL_VERIFICATION_OTP_REQUESTED");
+    event.setPayload(payload);
+    event.setEventStatus("PENDING");
+    domainEventsRepository.save(event);
+  }
 }
