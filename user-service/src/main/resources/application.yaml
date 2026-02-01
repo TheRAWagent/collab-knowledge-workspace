@@ -1,6 +1,12 @@
 spring:
   application:
     name: user-service
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 30000
+      max-lifetime: 600000
   threads:
     virtual:
       enabled: true

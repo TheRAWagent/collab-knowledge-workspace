@@ -36,7 +36,7 @@ public class AuthController {
         }
 
         String cookie = ResponseCookie.from("token", tokenOptional.get()).httpOnly(true).secure(true).path("/").maxAge(Duration.ofDays(7).toSeconds()) // 7 days
-                .sameSite("Lax").build().toString();
+                .sameSite("None").build().toString();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie).build();
     }

@@ -4,6 +4,13 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  r2dbc:
+    pool:
+      max-size: 5
+      min-idle: 1
+      initial-size: 1
+      max-idle-time: 30000ms
+      max-lifetime: 600000ms
 # Variables to configure while deploying to different environments
 # SPRING_R2DBC_URL -> Database connection URL
 # SPRING_R2DBC_USERNAME -> Database username
