@@ -77,7 +77,7 @@ export const getSnapshot = (
     
     
     return axios.default.get(
-      `http://localhost:8080/workspace/internal/documents/${documentId}/snapshot`,options
+      `/workspace/internal/documents/${documentId}/snapshot`,options
     );
   }
 
@@ -86,7 +86,7 @@ export const getSnapshot = (
 
 export const getGetSnapshotQueryKey = (documentId?: string,) => {
     return [
-    `http://localhost:8080/workspace/internal/documents/${documentId}/snapshot`
+    `/workspace/internal/documents/${documentId}/snapshot`
     ] as const;
     }
 
@@ -163,7 +163,7 @@ export const saveSnapshot = (
     
     
     return axios.default.put(
-      `http://localhost:8080/workspace/internal/documents/${documentId}/snapshot`,
+      `/workspace/internal/documents/${documentId}/snapshot`,
       blockSnapshotRequest,options
     );
   }
@@ -219,7 +219,7 @@ export const getPages = (
     
     
     return axios.default.get(
-      `http://localhost:8080/workspace/${workspaceId}/documents`,options
+      `/workspace/${workspaceId}/documents`,options
     );
   }
 
@@ -228,7 +228,7 @@ export const getPages = (
 
 export const getGetPagesQueryKey = (workspaceId?: string,) => {
     return [
-    `http://localhost:8080/workspace/${workspaceId}/documents`
+    `/workspace/${workspaceId}/documents`
     ] as const;
     }
 
@@ -305,7 +305,7 @@ export const createPage = (
     
     
     return axios.default.post(
-      `http://localhost:8080/workspace/${workspaceId}/documents`,
+      `/workspace/${workspaceId}/documents`,
       documentRequest,options
     );
   }
@@ -362,7 +362,7 @@ export const getPage = (
     
     
     return axios.default.get(
-      `http://localhost:8080/workspace/${workspaceId}/documents/${pageId}`,options
+      `/workspace/${workspaceId}/documents/${pageId}`,options
     );
   }
 
@@ -372,7 +372,7 @@ export const getPage = (
 export const getGetPageQueryKey = (workspaceId?: string,
     pageId?: string,) => {
     return [
-    `http://localhost:8080/workspace/${workspaceId}/documents/${pageId}`
+    `/workspace/${workspaceId}/documents/${pageId}`
     ] as const;
     }
 
@@ -454,7 +454,7 @@ export const deletePage = (
     
     
     return axios.default.delete(
-      `http://localhost:8080/workspace/${workspaceId}/documents/${pageId}`,options
+      `/workspace/${workspaceId}/documents/${pageId}`,options
     );
   }
 
@@ -511,7 +511,7 @@ export const updatePage = (
     
     
     return axios.default.patch(
-      `http://localhost:8080/workspace/${workspaceId}/documents/${pageId}`,
+      `/workspace/${workspaceId}/documents/${pageId}`,
       documentRequest,options
     );
   }

@@ -30,24 +30,149 @@ import type {
   AxiosResponse
 } from 'axios';
 
-export interface UserRequestDto {
-  /** @minLength 1 */
-  name: string;
+export interface VerifyUserRequestDto {
+  email: string;
+  /**
+   * @minLength 6
+   * @maxLength 6
+   */
+  code: string;
+}
+
+export interface CreateUserRequestDto {
+  email: string;
+}
+
+export interface UpdateUserRequestDto {
+  name?: string;
 }
 
 export interface UserResponseDto {
   name?: string;
   email?: string;
   avatarUrl?: string;
+  verified?: boolean;
 }
 
+export const verifyEmail = (
+    verifyUserRequestDto: VerifyUserRequestDto, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.post(
+      `/user/verify-email`,
+      verifyUserRequestDto,options
+    );
+  }
+
+
+
+export const getVerifyEmailMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof verifyEmail>>, TError,{data: VerifyUserRequestDto}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof verifyEmail>>, TError,{data: VerifyUserRequestDto}, TContext> => {
+
+const mutationKey = ['verifyEmail'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof verifyEmail>>, {data: VerifyUserRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  verifyEmail(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type VerifyEmailMutationResult = NonNullable<Awaited<ReturnType<typeof verifyEmail>>>
+    export type VerifyEmailMutationBody = VerifyUserRequestDto
+    export type VerifyEmailMutationError = AxiosError<unknown>
+
+    export const useVerifyEmail = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof verifyEmail>>, TError,{data: VerifyUserRequestDto}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof verifyEmail>>,
+        TError,
+        {data: VerifyUserRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getVerifyEmailMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+export const resendVerification = (
+    verifyUserRequestDto: VerifyUserRequestDto, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.post(
+      `/user/resend-verification`,
+      verifyUserRequestDto,options
+    );
+  }
+
+
+
+export const getResendVerificationMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resendVerification>>, TError,{data: VerifyUserRequestDto}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof resendVerification>>, TError,{data: VerifyUserRequestDto}, TContext> => {
+
+const mutationKey = ['resendVerification'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resendVerification>>, {data: VerifyUserRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  resendVerification(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ResendVerificationMutationResult = NonNullable<Awaited<ReturnType<typeof resendVerification>>>
+    export type ResendVerificationMutationBody = VerifyUserRequestDto
+    export type ResendVerificationMutationError = AxiosError<unknown>
+
+    export const useResendVerification = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resendVerification>>, TError,{data: VerifyUserRequestDto}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof resendVerification>>,
+        TError,
+        {data: VerifyUserRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getResendVerificationMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
 export const getUser = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UserResponseDto>> => {
     
     
     return axios.default.get(
-      `http://localhost:8080/user/`,options
+      `/user/`,options
     );
   }
 
@@ -56,7 +181,7 @@ export const getUser = (
 
 export const getGetUserQueryKey = () => {
     return [
-    `http://localhost:8080/user/`
+    `/user/`
     ] as const;
     }
 
@@ -127,21 +252,21 @@ export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError =
 
 
 export const createUser = (
-    userRequestDto: UserRequestDto, options?: AxiosRequestConfig
+    createUserRequestDto: CreateUserRequestDto, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<void>> => {
     
     
     return axios.default.post(
-      `http://localhost:8080/user/`,
-      userRequestDto,options
+      `/user/`,
+      createUserRequestDto,options
     );
   }
 
 
 
 export const getCreateUserMutationOptions = <TError = AxiosError<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: UserRequestDto}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: UserRequestDto}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequestDto}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequestDto}, TContext> => {
 
 const mutationKey = ['createUser'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
@@ -153,7 +278,7 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createUser>>, {data: UserRequestDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createUser>>, {data: CreateUserRequestDto}> = (props) => {
           const {data} = props ?? {};
 
           return  createUser(data,axiosOptions)
@@ -165,15 +290,15 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type CreateUserMutationResult = NonNullable<Awaited<ReturnType<typeof createUser>>>
-    export type CreateUserMutationBody = UserRequestDto
+    export type CreateUserMutationBody = CreateUserRequestDto
     export type CreateUserMutationError = AxiosError<unknown>
 
     export const useCreateUser = <TError = AxiosError<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: UserRequestDto}, TContext>, axios?: AxiosRequestConfig}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequestDto}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createUser>>,
         TError,
-        {data: UserRequestDto},
+        {data: CreateUserRequestDto},
         TContext
       > => {
 
@@ -183,21 +308,21 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
     }
     
 export const updateUser = (
-    userRequestDto: UserRequestDto, options?: AxiosRequestConfig
+    updateUserRequestDto: UpdateUserRequestDto, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UserResponseDto>> => {
     
     
     return axios.default.patch(
-      `http://localhost:8080/user/`,
-      userRequestDto,options
+      `/user/`,
+      updateUserRequestDto,options
     );
   }
 
 
 
 export const getUpdateUserMutationOptions = <TError = AxiosError<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{data: UserRequestDto}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{data: UserRequestDto}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{data: UpdateUserRequestDto}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{data: UpdateUserRequestDto}, TContext> => {
 
 const mutationKey = ['updateUser'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
@@ -209,7 +334,7 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateUser>>, {data: UserRequestDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateUser>>, {data: UpdateUserRequestDto}> = (props) => {
           const {data} = props ?? {};
 
           return  updateUser(data,axiosOptions)
@@ -221,15 +346,15 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type UpdateUserMutationResult = NonNullable<Awaited<ReturnType<typeof updateUser>>>
-    export type UpdateUserMutationBody = UserRequestDto
+    export type UpdateUserMutationBody = UpdateUserRequestDto
     export type UpdateUserMutationError = AxiosError<unknown>
 
     export const useUpdateUser = <TError = AxiosError<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{data: UserRequestDto}, TContext>, axios?: AxiosRequestConfig}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{data: UpdateUserRequestDto}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateUser>>,
         TError,
-        {data: UserRequestDto},
+        {data: UpdateUserRequestDto},
         TContext
       > => {
 

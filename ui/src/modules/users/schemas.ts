@@ -6,14 +6,33 @@
  */
 import * as zod from 'zod';
 
-export const createUserBody = zod.object({
-  "name": zod.string().min(1)
+export const verifyEmailBodyCodeMin = 6;
+export const verifyEmailBodyCodeMax = 6;
+
+
+
+export const verifyEmailBody = zod.object({
+  "email": zod.string(),
+  "code": zod.string().min(verifyEmailBodyCodeMin).max(verifyEmailBodyCodeMax)
 })
 
 
+export const resendVerificationBodyCodeMin = 6;
+export const resendVerificationBodyCodeMax = 6;
 
+
+
+export const resendVerificationBody = zod.object({
+  "email": zod.string(),
+  "code": zod.string().min(resendVerificationBodyCodeMin).max(resendVerificationBodyCodeMax)
+})
+
+
+export const createUserBody = zod.object({
+  "email": zod.string()
+})
 
 
 export const updateUserBody = zod.object({
-  "name": zod.string().min(1)
+  "name": zod.string().optional()
 })

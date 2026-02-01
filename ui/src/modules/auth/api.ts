@@ -53,7 +53,7 @@ export const createUser = (
     
     
     return axios.default.post(
-      `http://localhost:8080/auth/register`,
+      `/auth/register`,
       authRequestDto,options
     );
   }
@@ -116,7 +116,7 @@ export const logout = (
     
     
     return axios.default.post(
-      `http://localhost:8080/auth/logout`,undefined,options
+      `/auth/logout`,undefined,options
     );
   }
 
@@ -177,7 +177,7 @@ export const login = (
     
     
     return axios.default.post(
-      `http://localhost:8080/auth/login`,
+      `/auth/login`,
       authRequestDto,options
     );
   }
@@ -239,7 +239,7 @@ export const validateToken = (
     
     
     return axios.default.get(
-      `http://localhost:8080/auth/validate`,options
+      `/auth/validate`,options
     );
   }
 
@@ -248,7 +248,7 @@ export const validateToken = (
 
 export const getValidateTokenQueryKey = () => {
     return [
-    `http://localhost:8080/auth/validate`
+    `/auth/validate`
     ] as const;
     }
 

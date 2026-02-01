@@ -113,7 +113,7 @@ export const getById = (
     
     
     return axios.default.get(
-      `http://localhost:8080/workspaces/${id}`,options
+      `/workspaces/${id}`,options
     );
   }
 
@@ -122,7 +122,7 @@ export const getById = (
 
 export const getGetByIdQueryKey = (id?: string,) => {
     return [
-    `http://localhost:8080/workspaces/${id}`
+    `/workspaces/${id}`
     ] as const;
     }
 
@@ -205,7 +205,7 @@ export const update = (
     
     
     return axios.default.put(
-      `http://localhost:8080/workspaces/${id}`,
+      `/workspaces/${id}`,
       updateWorkspaceRequest,options
     );
   }
@@ -267,7 +267,7 @@ export const _delete = (
     
     
     return axios.default.delete(
-      `http://localhost:8080/workspaces/${id}`,options
+      `/workspaces/${id}`,options
     );
   }
 
@@ -326,7 +326,7 @@ export const transferOwnership = (
     
     
     return axios.default.post(
-      `http://localhost:8080/workspaces/${id}/transfer-ownership`,undefined,{
+      `/workspaces/${id}/transfer-ownership`,undefined,{
     ...options,
         params: {...params, ...options?.params},}
     );
@@ -386,7 +386,7 @@ export const list = (
     
     
     return axios.default.get(
-      `http://localhost:8080/workspaces/`,{
+      `/workspaces/`,{
     ...options,
         params: {...params, ...options?.params},}
     );
@@ -397,7 +397,7 @@ export const list = (
 
 export const getListQueryKey = (params?: ListParams,) => {
     return [
-    `http://localhost:8080/workspaces/`, ...(params ? [params]: [])
+    `/workspaces/`, ...(params ? [params]: [])
     ] as const;
     }
 
@@ -479,7 +479,7 @@ export const create = (
     
     
     return axios.default.post(
-      `http://localhost:8080/workspaces/`,
+      `/workspaces/`,
       createWorkspaceRequest,options
     );
   }
@@ -538,7 +538,7 @@ export const getMembers = (
     
     
     return axios.default.get(
-      `http://localhost:8080/workspaces/${id}/members`,options
+      `/workspaces/${id}/members`,options
     );
   }
 
@@ -547,7 +547,7 @@ export const getMembers = (
 
 export const getGetMembersQueryKey = (id?: string,) => {
     return [
-    `http://localhost:8080/workspaces/${id}/members`
+    `/workspaces/${id}/members`
     ] as const;
     }
 
