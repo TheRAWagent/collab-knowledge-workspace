@@ -7,6 +7,7 @@ import axios from "axios";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const RootLayout = () => (
   <QueryClientProvider client={queryClient}>

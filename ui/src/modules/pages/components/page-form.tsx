@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createPageBody } from "../schemas";
-import { useCreatePage, useUpdatePage, type PageResponse, getGetPagesQueryOptions } from "../api";
+import { useCreatePage, useUpdatePage, type DocumentResponse, getGetPagesQueryOptions } from "../api";
 import {
   Form,
   FormControl,
@@ -21,7 +21,7 @@ export interface PageFormProps {
   workspaceId: string;
   onSuccess?: () => void;
   onCancel?: () => void;
-  initialValues?: PageResponse;
+  initialValues?: DocumentResponse;
   className?: string;
 }
 

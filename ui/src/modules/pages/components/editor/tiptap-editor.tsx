@@ -51,6 +51,8 @@ import CollaborationCaret from "@tiptap/extension-collaboration-caret";
 import { nodeWithId } from "@/lib/node-with-id";
 import { useParams } from "@tanstack/react-router";
 import { useGetUser } from "@/modules/users/api.ts";
+import { all, createLowlight } from "lowlight";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
 interface TiptapEditorProps {
   initialContent?: JSONContent;
@@ -59,6 +61,8 @@ interface TiptapEditorProps {
 }
 
 const ydoc = new Doc();
+
+const lowlight = createLowlight(all);
 
 export function TiptapEditor({
   initialContent,
@@ -71,7 +75,7 @@ export function TiptapEditor({
 
   const provider = useMemo(() => new HocuspocusProvider({
     name: pageId,
-    url: `ws://${import.meta.env.VITE_API_URL}/collaboration`,
+    url: `ws://${import.meta.env.VITE_API_BASE_URL}/collaboration`,
     document: ydoc,
   }), [pageId, ydoc]);
   const editor = useEditor({
@@ -124,6 +128,9 @@ export function TiptapEditor({
       CollaborationCaret.configure({
         provider: provider,
         user: { name: data?.data.name, color: '#f4f4f4' }
+      }),
+      CodeBlockLowlight.configure({
+        lowlight
       })
     ],
     editable,

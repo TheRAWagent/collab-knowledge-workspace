@@ -1,12 +1,12 @@
 import { ResponsiveDialog } from "@/components/responsive-dialog";
 import { PageForm } from "./page-form";
-import { type PageResponse } from "../api";
+import { type DocumentResponse } from "../api";
 
 interface EditPageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   workspaceId: string;
-  page: PageResponse;
+  page: DocumentResponse;
 }
 
 export function EditPageDialog({

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useGetById } from "../api";
-import { useGetPages, useDeletePage, getGetPagesQueryOptions, type PageResponse } from "@/modules/pages/api";
+import { useGetPages, useDeletePage, getGetPagesQueryOptions, type DocumentResponse } from "@/modules/pages/api";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Plus, FileText } from "lucide-react";
@@ -28,18 +28,18 @@ export function WorkspacePage({ workspaceId }: { workspaceId: string }) {
   });
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingPage, setEditingPage] = useState<PageResponse | null>(null);
+  const [editingPage, setEditingPage] = useState<DocumentResponse | null>(null);
 
   const [RemoveConfirmation, confirmRemove] = useConfirm(
     "Are you sure you want to delete this page?",
     "This action cannot be undone. All associated data will be permanently deleted."
   );
 
-  const handleEdit = (page: PageResponse) => {
+  const handleEdit = (page: DocumentResponse) => {
     setEditingPage(page);
   };
 
-  const handleDelete = async (page: PageResponse) => {
+  const handleDelete = async (page: DocumentResponse) => {
     const ok = await confirmRemove();
     if(!ok) return;
     deletePage({ workspaceId, pageId: page.id });

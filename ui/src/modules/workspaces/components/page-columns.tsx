@@ -1,18 +1,18 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2, FileText } from "lucide-react";
-import { type PageResponse } from "@/modules/pages/api";
+import { type DocumentResponse } from "@/modules/pages/api";
 import { Link } from "@tanstack/react-router";
 
 export interface PageColumnsProps {
-  onEdit: (page: PageResponse) => void;
-  onDelete: (page: PageResponse) => void;
+  onEdit: (page: DocumentResponse) => void;
+  onDelete: (page: DocumentResponse) => void;
 }
 
 export const createPageColumns = ({
   onEdit,
   onDelete,
-}: PageColumnsProps): ColumnDef<PageResponse>[] => [
+}: PageColumnsProps): ColumnDef<DocumentResponse>[] => [
     {
       accessorKey: "title",
       header: "Title",

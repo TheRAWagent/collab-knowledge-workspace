@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { createUserBody } from "../schemas";
-import { useCreateUser } from "../api";
+import { updateUserBody } from "../schemas";
+import { updateUser } from "../api";
 import {
   Form,
   FormControl,
@@ -15,34 +15,36 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { User } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
 
 export default function OnboardingCard() {
   const router = useRouter();
-  const { mutate: createUser, isPending } = useCreateUser({
-    mutation: {
+  const { mutate: createUser, isPending } = useMutation({
+    mutationFn: async (data: z.infer<typeof updateUserBody>) => {
+      return await updateUser(data);
+    },
       onSuccess: () => {
-        toast.success("Profile created successfully!");
-        router.navigate({to: '/'});
+        toast.success("Profile updated successfully!");
+        router.navigate({ to: '/' });
       },
       onError: () => {
-        toast.error("Failed to create profile. Please try again.");
+        toast.error("Failed to update profile. Please try again.");
       },
-    },
-  });
+    });
 
-  const form = useForm<z.infer<typeof createUserBody>>({
-    resolver: zodResolver(createUserBody),
+  const form = useForm<z.infer<typeof updateUserBody>>({
+    resolver: zodResolver(updateUserBody),
     defaultValues: {
       name: "",
-    },
+      },
   });
 
-  function onSubmit(values: z.infer<typeof createUserBody>) {
-    createUser({ data: values });
+  function onSubmit(values: z.infer<typeof updateUserBody>) {
+    createUser(values);
   }
 
   return (
-    <div className="w-[450px] max-w-[450px] transition-all duration-700 ease-out h-[480px] lg:pl-60">
+    <div className="w-[450px] max-w-[450px] transition-all duration-700 ease-out h-[480px]">
       <div className="relative h-full">
         {/* Glass morphism card */}
         <div className="absolute inset-0 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl">

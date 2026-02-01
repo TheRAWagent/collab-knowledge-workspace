@@ -1,8 +1,8 @@
 import { Sidebar } from '@/components/sidebar'
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { queryClient } from '@/lib/query-client'
-import { getGetUserQueryOptions } from '@/modules/users/api'
+import { getGetUserQueryOptions, useGetUser } from '@/modules/users/api'
 
 export const Route = createFileRoute('/_protected')({
   component: RouteComponent,
@@ -29,7 +29,18 @@ export const Route = createFileRoute('/_protected')({
 })
 
 function RouteComponent() {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const router = useRouter();
+  const {data: userData, isPending} = useGetUser();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  if(isPending){
+    return null;
+  }
+
+  if(userData?.data.name === null){
+    router.navigate({to: '/onboarding'})
+  }
+
   return <div className="mx-auto max-w-screen-2xl relative">
     <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
     <div className='lg:pl-64'>
