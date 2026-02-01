@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-routes": "tsr generate"
   },
   "dependencies": {
     "@hocuspocus/provider": "^3.4.3",
@@ -76,6 +77,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@tanstack/eslint-plugin-query": "^5.91.2",
+    "@tanstack/router-cli": "^1.157.18",
     "@tanstack/router-plugin": "^1.136.6",
     "@types/node": "^24.10.0",
     "@types/react": "^19.2.2",
