@@ -13,7 +13,7 @@ Handles user authentication, session management, and JWT token issuance for the 
 
 ## Tech Stack
 
-- **Spring Boot 3.5.7**
+- **Spring Boot 4**
 - **Spring Security**
 - **Spring Data JPA**
 - **Spring Data Redis**

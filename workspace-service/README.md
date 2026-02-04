@@ -11,7 +11,7 @@ Manages organizational units (Workspaces) and document hierarchies within the Co
 
 ## Tech Stack
 
-- **Spring Boot 3.5.7**
+- **Spring Boot 3.5**
 - **Spring Data JPA**
 - **Spring gRPC**
 - **PostgreSQL**

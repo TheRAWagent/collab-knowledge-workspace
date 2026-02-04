@@ -59,7 +59,7 @@ The entry point for all HTTP requests, handling routing, load balancing, and req
 
 **Location**: `./api-gateway`
 
-**Technologies**: Spring Cloud Gateway, Spring gRPC, Spring Boot 3.5.7
+**Technologies**: Spring Cloud Gateway, Spring gRPC, Spring Boot 3.5
 
 **Key Features**:
 - HTTP request routing

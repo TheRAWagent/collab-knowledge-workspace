@@ -11,7 +11,7 @@ Manages user profiles and identity metadata. Provides gRPC interfaces for intern
 
 ## Tech Stack
 
-- **Spring Boot 3.5.7**
+- **Spring Boot 3.5**
 - **Spring Data JPA**
 - **Spring gRPC** (Server implementation)
 - **PostgreSQL**

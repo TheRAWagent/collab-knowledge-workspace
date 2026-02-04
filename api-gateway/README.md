@@ -13,7 +13,7 @@ The entry point for all client requests in the Collaborative Knowledge Workspace
 
 ## Tech Stack
 
-- **Spring Boot 3.5.7**
+- **Spring Boot 3.5**
 - **Spring Cloud Gateway** (WebFlux-based)
 - **Spring gRPC** (Client)
 - **Java 25**
