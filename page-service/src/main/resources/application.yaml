@@ -11,6 +11,18 @@ spring:
       initial-size: 1
       max-idle-time: 30000ms
       max-lifetime: 600000ms
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: info
+    com.dj.ckw.pageservice: info
+  structured:
+    format:
+      console: logstash
 # Variables to configure while deploying to different environments
 # SPRING_R2DBC_URL -> Database connection URL
 # SPRING_R2DBC_USERNAME -> Database username

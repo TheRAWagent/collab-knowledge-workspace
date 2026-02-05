@@ -153,5 +153,14 @@ spring:
 server:
   port: 8080
 logging:
+  config: classpath:logback-spring.xml
   level:
     root: info
+    com.dj.ckw.apigateway: info
+  structured:
+    format:
+      console: logstash
+management:
+  tracing:
+    sampling:
+      probability: 1.0

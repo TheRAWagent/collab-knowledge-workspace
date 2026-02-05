@@ -31,6 +31,11 @@ dependencies {
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-tracing-bridge-otel")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp")
+    implementation("ch.qos.logback:logback-classic")
+    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
 }
 
 dependencyManagement {

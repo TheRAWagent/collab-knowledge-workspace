@@ -15,3 +15,11 @@ spring:
 server:
   tomcat:
     basedir: /app/tomcat-temp
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: info
+    com.dj.ckw.userservice: info
+  structured:
+    format:
+      console: logstash

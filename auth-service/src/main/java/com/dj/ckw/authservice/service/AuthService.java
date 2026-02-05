@@ -8,11 +8,8 @@ import com.dj.ckw.authservice.grpc.UserIdentityConfirmationServiceGrpc;
 import com.dj.ckw.authservice.model.User;
 import com.dj.ckw.authservice.repository.UserRepository;
 import com.dj.ckw.authservice.util.JwtUtil;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,19 +26,16 @@ public class AuthService {
   private final Logger log = LoggerFactory.getLogger(AuthService.class);
 
   public AuthService(
-      UserService userService,
-      PasswordEncoder passwordEncoder,
-      JwtUtil jwtUtil,
-      UserRepository userRepository,
-      @Value("${user.service.address}") String serverAddress,
-      @Value("${user.service.grpc.port:9090}") int port) {
+          UserService userService,
+          PasswordEncoder passwordEncoder,
+          JwtUtil jwtUtil,
+          UserRepository userRepository,
+          UserIdentityConfirmationServiceGrpc.UserIdentityConfirmationServiceBlockingV2Stub stub) {
     this.userService = userService;
     this.passwordEncoder = passwordEncoder;
     this.jwtUtil = jwtUtil;
     this.userRepository = userRepository;
-    log.info("Connecting to Workspace service grpc server at {}:{}", serverAddress, port);
-    ManagedChannel channel = ManagedChannelBuilder.forAddress(serverAddress, port).usePlaintext().build();
-    this.userIdentityConfirmationServiceStub = UserIdentityConfirmationServiceGrpc.newBlockingV2Stub(channel);
+      this.userIdentityConfirmationServiceStub = stub;
   }
 
   public Optional<String> authenticate(AuthRequestDto authRequestDto) {

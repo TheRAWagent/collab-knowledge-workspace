@@ -17,8 +17,31 @@ spring:
   threads:
     virtual:
       enabled: true
+  grpc:
+    client:
+      channels:
+        user-service:
+          address: ${USER_SERVICE_ADDRESS:ckw-user-service}:${USER_SERVICE_GRPC_PORT:9090}
+          negotiation-type: plaintext
 
 server:
   port: 8080
   tomcat:
     basedir: /app/tomcat-temp
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: info
+    com.dj.ckw.authservice: DEBUG
+  structured:
+    format:
+      console: logstash
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    metrics:
+      export:
+        enabled: false

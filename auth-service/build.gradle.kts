@@ -6,7 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     id("com.google.protobuf") version "0.9.5"
 }
-val springGrpcVersion by extra("1.0.1")
+val springGrpcVersion by extra("1.0.2")
 
 group = "com.dj.ckw"
 version = "0.0.1-SNAPSHOT"
@@ -29,7 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("io.grpc:grpc-services")
-    implementation("org.springframework.grpc:spring-grpc-server-web-spring-boot-starter")
+    implementation("org.springframework.grpc:spring-grpc-client-spring-boot-starter")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
@@ -44,6 +44,12 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.15")
     implementation("org.bouncycastle:bcprov-jdk18on:1.83")
     implementation("org.springframework.boot:spring-boot-starter-json")
+    implementation("ch.qos.logback:logback-classic")
+    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
+    implementation("org.springframework.boot:spring-boot-starter-micrometer-metrics")
+    testImplementation("org.springframework.boot:spring-boot-starter-micrometer-metrics-test")
+    implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
+    implementation(platform("org.springframework.grpc:spring-grpc-dependencies:$springGrpcVersion"))
 
 }
 
