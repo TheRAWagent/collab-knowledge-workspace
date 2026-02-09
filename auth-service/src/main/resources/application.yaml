@@ -42,6 +42,13 @@ management:
     sampling:
       probability: 1.0
   otlp:
-    metrics:
+    tracing:
       export:
-        enabled: false
+        otlp:
+          enabled: true
+          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
+          transport: grpc
+otel:
+  resource:
+    attributes:
+      service.name: auth-service

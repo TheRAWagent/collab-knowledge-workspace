@@ -5,11 +5,11 @@ import com.dj.ckw.workspaceservice.grpc.PageAccessRequest;
 import com.dj.ckw.workspaceservice.grpc.PageAccessResponse;
 import com.dj.ckw.workspaceservice.grpc.WorkspaceServiceGrpc;
 import io.grpc.stub.StreamObserver;
-import org.springframework.stereotype.Service;
+import org.springframework.grpc.server.service.GrpcService;
 
 import java.util.Optional;
 
-@Service
+@GrpcService
 public class GrpcWorkspaceService extends WorkspaceServiceGrpc.WorkspaceServiceImplBase {
 
     private final WorkspaceService workspaceService;

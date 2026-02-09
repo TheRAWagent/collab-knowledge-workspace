@@ -6,6 +6,18 @@
     </content>
   </component>
   <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <webroots />
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/../../workspace-service/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../workspace-service/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../workspace-service/build/generated/source/proto/main/grpc" />
+          <root url="file://$MODULE_DIR$/../../workspace-service/build/generated/source/proto/main/java" />
+          <root url="file://$MODULE_DIR$/../../workspace-service/build/generated/sources/annotationProcessor/java/main" />
+        </sourceRoots>
+      </configuration>
+    </facet>
     <facet type="jpa" name="JPA">
       <configuration>
         <setting name="validation-enabled" value="true" />

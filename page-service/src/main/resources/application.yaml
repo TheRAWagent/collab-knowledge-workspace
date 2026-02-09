@@ -15,6 +15,12 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  otlp:
+    tracing:
+      transport: grpc
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
+      export:
+        enabled: true
 logging:
   config: classpath:logback-spring.xml
   level:
@@ -23,6 +29,10 @@ logging:
   structured:
     format:
       console: logstash
+otel:
+  resource:
+    attributes:
+      service.name: page-service
 # Variables to configure while deploying to different environments
 # SPRING_R2DBC_URL -> Database connection URL
 # SPRING_R2DBC_USERNAME -> Database username

@@ -21,3 +21,17 @@ logging:
   structured:
     format:
       console: logstash
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      transport: grpc
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
+      export:
+        enabled: true
+otel:
+  resource:
+    attributes:
+      service.name: workspace-service

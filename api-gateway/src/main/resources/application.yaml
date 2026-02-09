@@ -7,7 +7,7 @@ spring:
         webflux:
           routes:
             - id: auth-service-route
-              uri: http://ckw-auth-service:8080
+              uri: http://auth-service:8080
               predicates:
                 - name: Path
                   args:
@@ -21,7 +21,7 @@ spring:
                   args:
                     part: 1
             - id: auth-docs-route
-              uri: http://ckw-auth-service:8080
+              uri: http://auth-service:8080
               predicates:
                 - name: Path
                   args:
@@ -33,7 +33,7 @@ spring:
                     regexp: /api-docs/auth
                     replacement: /v3/api-docs
             - id: user-service-public-routes
-              uri: http://ckw-user-service:8080
+              uri: http://user-service:8080
               predicates:
                 - name: Path
                   args:
@@ -49,7 +49,7 @@ spring:
                   args:
                     part: 1
             - id: user-service-private-routes
-              uri: http://ckw-user-service:8080
+              uri: http://user-service:8080
               predicates:
                 - name: Path
                   args:
@@ -61,7 +61,7 @@ spring:
                     part: 1
                 - name: JwtValidation
             - id: user-docs-route
-              uri: http://ckw-user-service:8080
+              uri: http://user-service:8080
               predicates:
                 - name: Path
                   args:
@@ -73,7 +73,7 @@ spring:
                     regexp: /api-docs/user
                     replacement: /v3/api-docs
             - id: workspace-service-route
-              uri: http://ckw-workspace-service:8080
+              uri: http://workspace-service:8080
               predicates:
                 - name: Path
                   args:
@@ -85,7 +85,7 @@ spring:
                     part: 1
                 - name: JwtValidation
             - id: workspace-docs-route
-              uri: http://ckw-workspace-service:8080
+              uri: http://workspace-service:8080
               predicates:
                 - name: Path
                   args:
@@ -97,7 +97,7 @@ spring:
                     regexp: /api-docs/workspace
                     replacement: /v3/api-docs
             - id: page-service-route
-              uri: http://ckw-page-service:8080
+              uri: http://page-service:8080
               predicates:
                 - name: Path
                   args:
@@ -110,7 +110,7 @@ spring:
                   args:
                     part: 1
             - id: page-docs-route
-              uri: http://ckw-page-service:8080
+              uri: http://page-service:8080
               predicates:
                 - name: Path
                   args:
@@ -122,7 +122,7 @@ spring:
                     regexp: /api-docs/page
                     replacement: /v3/api-docs
             - id: collaboration-service-route
-              uri: ws://ckw-collaboration-service:8080
+              uri: ws://collaboration-service:8080
               predicates:
                 - name: Path
                   args:
@@ -164,3 +164,13 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  otlp:
+    tracing:
+      transport: grpc
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
+      export:
+        enabled: true
+otel:
+  resource:
+    attributes:
+      service.name: api-gateway

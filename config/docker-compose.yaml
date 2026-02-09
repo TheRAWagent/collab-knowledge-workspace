@@ -1,0 +1,195 @@
+name: ckw
+
+services:
+  postgres:
+    command:
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - work_mem=4MB
+      - -c
+      - max_connections=50
+    env_file: ./.env.db
+    healthcheck:
+      test: ["CMD", "pg_isready", "--dbname", "postgres", "--username", "postgres_admin"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+    image: 192.168.29.125/prod/postgres:18-alpine3.22
+    networks:
+      - internal
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - ckw-postgres-data:/var/lib/postgresql
+  cache:
+    command:
+      - redis-server
+      - --protected-mode
+      - no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    image: 192.168.29.125/prod/redis:8
+    networks:
+      - internal
+    restart: unless-stopped
+    # No volumes, as data is stored in memory
+
+  collaboration-service:
+    image: 192.168.29.125/prod/ckw-collaboration-service:latest
+    networks:
+      - internal
+    restart: unless-stopped
+    environment:
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
+      - BASE_URL=ckw-page-service:8080
+      - PORT=8080
+    depends_on:
+      cache:
+        condition: service_healthy
+      page-service:
+        condition: service_started
+    mem_limit: 256M
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  page-service:
+    image: 192.168.29.125/prod/ckw-page-service:latest
+    networks:
+      - internal
+    env_file:
+      - ./.env.page-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    mem_limit: 512M
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  workspace-service:
+    image: 192.168.29.125/prod/ckw-workspace-service:latest
+    networks:
+      - internal
+    env_file:
+      - ./.env.workspace-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    mem_limit: 512M
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  user-service:
+    image: 192.168.29.125/prod/ckw-user-service:latest
+    networks:
+      - internal
+    env_file:
+      - ./.env.user-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    mem_limit: 512M
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  auth-service:
+    image: 192.168.29.125/prod/ckw-auth-service:latest
+    networks:
+      - internal
+    env_file:
+      - ./.env.auth-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+    mem_limit: 512M
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  api-gateway:
+    image: 192.168.29.125/prod/ckw-api-gateway:latest
+    networks:
+      - internal
+    env_file:
+      - ./.env.api-gateway
+    restart: unless-stopped
+    depends_on:
+      auth-service:
+        condition: service_started
+      page-service:
+        condition: service_started
+      workspace-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+      collaboration-service:
+        condition: service_started
+    mem_limit: 512M
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    ports:
+      - "8080:8080"
+
+  otel-collector:
+    image: 192.168.29.125/prod/opentelemetry-collector:0
+    networks:
+      - internal
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml
+    ports:
+      - 13133:13133 # health_check extension
+      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP http receiver
+  tempo:
+    image: 192.168.29.125/prod/tempo:2
+    networks:
+      - internal
+    restart: always
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml
+      - tempo-data:/var/tempo
+    ports:
+      - "3200:3200"
+    env_file:
+      - ./.env.tempo
+    command:
+      - -target=all
+      - -config.file=/etc/tempo.yaml
+
+  grafana:
+    image: 192.168.29.125/prod/grafana:12
+    networks:
+      - internal
+    ports:
+      - 3000:3000
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  ckw-postgres-data:
+  tempo-data:
