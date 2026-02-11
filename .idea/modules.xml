@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/auth-service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/collab-knowledge-workspace.iml" filepath="$PROJECT_DIR$/collab-knowledge-workspace.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/page-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/page-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/workspace-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/workspace-service.main.iml" />

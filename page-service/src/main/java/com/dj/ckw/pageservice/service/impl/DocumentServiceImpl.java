@@ -6,7 +6,6 @@ import com.dj.ckw.pageservice.exception.DocumentNotFoundException;
 import com.dj.ckw.pageservice.model.DocumentEntity;
 import com.dj.ckw.pageservice.repository.DocumentRepository;
 import com.dj.ckw.pageservice.service.DocumentService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,12 +15,15 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class DocumentServiceImpl implements DocumentService {
 
   private static final Logger log = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
   private final DocumentRepository documentRepository;
+
+  public DocumentServiceImpl(DocumentRepository documentRepository) {
+    this.documentRepository = documentRepository;
+  }
 
   public Mono<DocumentResponse> createPage(DocumentRequest req, UUID workspaceId) {
     log.info("Creating page '{}' in workspace '{}'", req.getTitle(), workspaceId);

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.r2dbc.postgresql.codec.Json;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,12 +16,16 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class SnapshotService {
 
     private static final Logger log = LoggerFactory.getLogger(SnapshotService.class);
     private final SnapshotRepository snapshotRepository;
     private final ObjectMapper objectMapper;
+
+    public SnapshotService(SnapshotRepository snapshotRepository, ObjectMapper objectMapper) {
+        this.snapshotRepository = snapshotRepository;
+        this.objectMapper = objectMapper;
+    }
 
     public Mono<Void> persist(
             UUID documentId,
