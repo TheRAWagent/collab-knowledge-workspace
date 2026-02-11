@@ -39,7 +39,7 @@ dependencies {
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-scalar:2.8.15")
     implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
     implementation("io.grpc:grpc-netty-shaded")
     modules {

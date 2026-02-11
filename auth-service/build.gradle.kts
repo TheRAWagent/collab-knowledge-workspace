@@ -41,7 +41,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     implementation("io.jsonwebtoken:jjwt-impl:0.13.0")
     implementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.15")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-scalar:2.8.15")
     implementation("org.bouncycastle:bcprov-jdk18on:1.83")
     implementation("org.springframework.boot:spring-boot-starter-json")
     implementation("ch.qos.logback:logback-classic")

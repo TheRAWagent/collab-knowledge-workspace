@@ -34,7 +34,7 @@ dependencies {
     implementation("org.postgresql:r2dbc-postgresql")
     runtimeOnly("org.postgresql:postgresql")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.14")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-scalar:2.8.15")
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
     implementation("ch.qos.logback:logback-classic")

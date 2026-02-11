@@ -20,6 +20,18 @@ spring:
                 - name: StripPrefix
                   args:
                     part: 1
+            - id: auth-scalar-route
+              uri: http://auth-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /auth/scalar
+                      - /auth/scalar/**
+              filters:
+                - name: StripPrefix
+                  args:
+                    part: 1
             - id: auth-docs-route
               uri: http://auth-service:8080
               predicates:
@@ -40,10 +52,18 @@ spring:
                     patterns:
                       - /user
                       - /user/verify-email
-                - name: Method
+              filters:
+                - name: StripPrefix
                   args:
-                    methods:
-                    - POST
+                    part: 1
+            - id: user-scalar-route
+              uri: http://user-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /user/scalar
+                      - /user/scalar/**
               filters:
                 - name: StripPrefix
                   args:
@@ -72,6 +92,18 @@ spring:
                   args:
                     regexp: /api-docs/user
                     replacement: /v3/api-docs
+            - id: workspace-scalar-route
+              uri: http://workspace-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /workspaces/scalar
+                      - /workspaces/scalar/**
+              filters:
+                - name: StripPrefix
+                  args:
+                    part: 1
             - id: workspace-service-route
               uri: http://workspace-service:8080
               predicates:
@@ -96,6 +128,18 @@ spring:
                   args:
                     regexp: /api-docs/workspace
                     replacement: /v3/api-docs
+            - id: page-scalar-route
+              uri: http://page-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /page/scalar
+                      - /page/scalar/**
+              filters:
+                - name: StripPrefix
+                  args:
+                    part: 1
             - id: page-service-route
               uri: http://page-service:8080
               predicates:

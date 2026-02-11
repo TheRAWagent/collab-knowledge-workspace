@@ -40,7 +40,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-scalar:2.8.15")
     implementation(platform("software.amazon.awssdk:bom:2.41.4"))
     implementation("software.amazon.awssdk:sesv2")
     implementation("org.bouncycastle:bcprov-jdk18on:1.83")
