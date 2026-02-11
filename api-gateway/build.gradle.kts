@@ -2,9 +2,9 @@ import com.google.protobuf.gradle.id
 
 plugins {
     java
-    id("org.springframework.boot") version "3.5.10"
+    id("org.springframework.boot") version "4.0.2"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.google.protobuf") version "0.9.4"
+    id("com.google.protobuf") version "0.9.5"
 }
 
 group = "com.dj.ckw"
@@ -21,17 +21,20 @@ repositories {
     mavenCentral()
 }
 
-extra["springCloudVersion"] = "2025.0.0"
-val springGrpcVersion by extra("0.12.0")
+extra["springCloudVersion"] = "2025.1.0"
+val springGrpcVersion by extra("1.0.2")
 
 dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux")
     implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
     implementation("io.grpc:grpc-services")
     testImplementation("org.springframework.grpc:spring-grpc-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.projectreactor:reactor-test")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-webclient")
+    testImplementation("org.springframework.boot:spring-boot-starter-webclient-test")
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
     implementation("ch.qos.logback:logback-classic")

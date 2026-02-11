@@ -1,9 +1,9 @@
 package com.dj.ckw.apigateway.exception;
 
 import org.springframework.boot.autoconfigure.web.WebProperties;
-import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
-import org.springframework.boot.web.reactive.error.ErrorAttributes;
+import org.springframework.boot.webflux.autoconfigure.error.AbstractErrorWebExceptionHandler;
+import org.springframework.boot.webflux.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 
   public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes, WebProperties webProperties,
-      ApplicationContext applicationContext, ServerCodecConfigurer serverCodecConfigurer) {
+                                        ApplicationContext applicationContext, ServerCodecConfigurer serverCodecConfigurer) {
     super(errorAttributes, webProperties.getResources(), applicationContext);
     super.setMessageWriters(serverCodecConfigurer.getWriters());
     super.setMessageReaders(serverCodecConfigurer.getReaders());

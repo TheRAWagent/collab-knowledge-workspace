@@ -2,25 +2,25 @@ package com.dj.ckw.apigateway.filter;
 
 import com.dj.ckw.apigateway.grpc.PageAccessRequest;
 import com.dj.ckw.apigateway.service.WorkspaceServiceGrpcClient;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.exc.JsonNodeException;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Component
 public class PageAccessValidationGatewayFilterFactory extends AbstractGatewayFilterFactory<AbstractGatewayFilterFactory.NameConfig> {
     private final WorkspaceServiceGrpcClient workspaceServiceGrpcClient;
-    private final ObjectMapper objectMapper;
+    private final JsonMapper objectMapper;
 
-    public PageAccessValidationGatewayFilterFactory(WorkspaceServiceGrpcClient workspaceServiceGrpcClient, ObjectMapper objectMapper) {
+    public PageAccessValidationGatewayFilterFactory(WorkspaceServiceGrpcClient workspaceServiceGrpcClient, JsonMapper objectMapper) {
         super(NameConfig.class);
         this.workspaceServiceGrpcClient = workspaceServiceGrpcClient;
         this.objectMapper = objectMapper;
@@ -41,7 +41,7 @@ public class PageAccessValidationGatewayFilterFactory extends AbstractGatewayFil
                         Base64.getDecoder().decode(userInfo.getBytes(StandardCharsets.UTF_8))
                 );
                 userId = node.get("id").asText();
-            } catch (IOException e) {
+            } catch (JsonNodeException e) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
