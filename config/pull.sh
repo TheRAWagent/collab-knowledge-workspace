@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Array of images to pull
-images=("ckw-api-gateway" "ckw-user-service" "ckw-auth-service" "ckw-page-service" "ckw-workspace-service") 
+images=("ckw-api-gateway" "ckw-user-service" "ckw-auth-service" "ckw-page-service" "ckw-workspace-service" "ckw-collaboration-service") 
 
 # Registry URL
 registry="192.168.29.125/prod" 

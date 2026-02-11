@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,32 +22,33 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Workspace {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(name = "owner_id", nullable = false)
-    private String ownerId;
+  @Column(name = "owner_id", nullable = false)
+  private String ownerId;
 
-    @Column(name = "name", nullable = false)
-    @NotBlank(message = "Name cannot be blank")
-    @NotNull(message = "Name is required")
-    private String name;
+  @Column(name = "name", nullable = false)
+  @NotBlank(message = "Name cannot be blank")
+  @NotNull(message = "Name is required")
+  private String name;
 
-    @Column(name = "description")
-    private String description;
+  @Column(name = "description")
+  private String description;
 
-    @Column(name = "created_at")
-    @CreatedDate
-    private Date createdAt;
+  @Column(name = "created_at")
+  @CreatedDate
+  private Date createdAt;
 
-    @Column(name = "updated_at")
-    @UpdateTimestamp
-    private Date updatedAt;
+  @Column(name = "updated_at")
+  @UpdateTimestamp
+  private Date updatedAt;
 
-    // OneToMany relation to WorkspaceMember with cascade delete and orphanRemoval
-    @Builder.Default
-    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WorkspaceMember> members = new ArrayList<>();
+  // OneToMany relation to WorkspaceMember with cascade delete and orphanRemoval
+  @Builder.Default
+  @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<WorkspaceMember> members = new ArrayList<>();
 }

@@ -1,6 +1,5 @@
 package com.dj.ckw.authservice.service;
 
-import com.dj.ckw.authservice.exception.UserNotFoundException;
 import com.dj.ckw.authservice.model.User;
 import com.dj.ckw.authservice.repository.UserRepository;
 import org.springframework.stereotype.Service;

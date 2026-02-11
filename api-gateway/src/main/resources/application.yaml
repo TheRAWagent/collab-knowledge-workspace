@@ -52,6 +52,10 @@ spring:
                     patterns:
                       - /user
                       - /user/verify-email
+                - name: Method
+                  args:
+                    methods:
+                      - POST
               filters:
                 - name: StripPrefix
                   args:
@@ -74,6 +78,7 @@ spring:
                 - name: Path
                   args:
                     patterns:
+                      - /user
                       - /user/**
               filters:
                 - name: StripPrefix
@@ -110,6 +115,7 @@ spring:
                 - name: Path
                   args:
                     patterns:
+                      - /workspaces
                       - /workspaces/**
               filters:
                 - name: StripPrefix

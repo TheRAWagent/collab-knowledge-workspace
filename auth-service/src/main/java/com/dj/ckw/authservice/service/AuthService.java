@@ -1,6 +1,7 @@
 package com.dj.ckw.authservice.service;
 
 import com.dj.ckw.authservice.dto.AuthRequestDto;
+import com.dj.ckw.authservice.exception.UserAlreadyExistsException;
 import com.dj.ckw.authservice.exception.UserNotFoundException;
 import com.dj.ckw.authservice.grpc.UserIdentityConfirmationRequest;
 import com.dj.ckw.authservice.grpc.UserIdentityConfirmationResponse;
@@ -26,16 +27,16 @@ public class AuthService {
   private final Logger log = LoggerFactory.getLogger(AuthService.class);
 
   public AuthService(
-          UserService userService,
-          PasswordEncoder passwordEncoder,
-          JwtUtil jwtUtil,
-          UserRepository userRepository,
-          UserIdentityConfirmationServiceGrpc.UserIdentityConfirmationServiceBlockingV2Stub stub) {
+      UserService userService,
+      PasswordEncoder passwordEncoder,
+      JwtUtil jwtUtil,
+      UserRepository userRepository,
+      UserIdentityConfirmationServiceGrpc.UserIdentityConfirmationServiceBlockingV2Stub stub) {
     this.userService = userService;
     this.passwordEncoder = passwordEncoder;
     this.jwtUtil = jwtUtil;
     this.userRepository = userRepository;
-      this.userIdentityConfirmationServiceStub = stub;
+    this.userIdentityConfirmationServiceStub = stub;
   }
 
   public Optional<String> authenticate(AuthRequestDto authRequestDto) {
@@ -61,6 +62,10 @@ public class AuthService {
 
   public void createUser(AuthRequestDto authRequestDto) {
     log.info("Attempting to create user: {}", authRequestDto.getEmail());
+    if (userRepository.findByEmail(authRequestDto.getEmail()).isPresent()) {
+      throw new UserAlreadyExistsException("User with email " + authRequestDto.getEmail() + " already exists");
+    }
+
     try {
       UserIdentityConfirmationResponse response = userIdentityConfirmationServiceStub.confirmUserIdentity(
           UserIdentityConfirmationRequest.newBuilder().setEmail(authRequestDto.getEmail()).build());

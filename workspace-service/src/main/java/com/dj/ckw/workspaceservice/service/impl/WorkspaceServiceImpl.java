@@ -162,10 +162,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     Workspace w = workspaceRepository.findById(UUID.fromString(workspaceId))
         .orElseThrow(() -> new NotFoundException("Workspace not found"));
 
-    Optional<WorkspaceMember> workspaceMember = w.getMembers().stream()
-        .filter(member -> member.getUserId().equals(requesterId)).findFirst();
+    WorkspaceMember workspaceMember = workspaceMemberRepository.findByUserIdAndWorkspace(requesterId, w);
 
-    return workspaceMember.map(WorkspaceMember::getRole);
+    return Optional.ofNullable(workspaceMember).map(WorkspaceMember::getRole);
 
   }
 }

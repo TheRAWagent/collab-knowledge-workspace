@@ -3,11 +3,13 @@ package com.dj.ckw.userservice.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 @Component
-@RequestScope
+@RequestScope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class RequestInfo {
     private final ObjectMapper objectMapper;
     private String email;
