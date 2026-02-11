@@ -12,7 +12,7 @@ export default defineConfig({
       mode: "single",
       client: "axios",
       target: "src/page-service.ts",
-      baseUrl: "http://ckw-page-service:8080",
+      baseUrl: "/",
       httpClient: "axios",
 
     }

@@ -27,13 +27,13 @@ export interface BlockSnapshotRequest {
   content?: BlockDto;
 }
 
-export interface PageRequest {
+export interface DocumentRequest {
   /** @minLength 1 */
   title: string;
   icon?: string;
 }
 
-export interface PageResponse {
+export interface DocumentResponse {
   id: string;
   workspaceId: string;
   title: string;
@@ -56,7 +56,7 @@ const getSnapshot = <TData = AxiosResponse<SnapshotResponse>>(
     documentId: string, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.default.get(
-      `http://ckw-page-service:8080/internal/documents/${documentId}/snapshot`,options
+      `/internal/documents/${documentId}/snapshot`,options
     );
   }
 
@@ -65,35 +65,35 @@ const saveSnapshot = <TData = AxiosResponse<void>>(
     blockSnapshotRequest: BlockSnapshotRequest, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.default.put(
-      `http://ckw-page-service:8080/internal/documents/${documentId}/snapshot`,
+      `/internal/documents/${documentId}/snapshot`,
       blockSnapshotRequest,options
     );
   }
 
-const getPages = <TData = AxiosResponse<PageResponse[]>>(
+const getPages = <TData = AxiosResponse<DocumentResponse[]>>(
     workspaceId: string, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.default.get(
-      `http://ckw-page-service:8080/${workspaceId}/documents`,options
+      `/${workspaceId}/documents`,options
     );
   }
 
-const createPage = <TData = AxiosResponse<PageResponse>>(
+const createPage = <TData = AxiosResponse<DocumentResponse>>(
     workspaceId: string,
-    pageRequest: PageRequest, options?: AxiosRequestConfig
+    documentRequest: DocumentRequest, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.default.post(
-      `http://ckw-page-service:8080/${workspaceId}/documents`,
-      pageRequest,options
+      `/${workspaceId}/documents`,
+      documentRequest,options
     );
   }
 
-const getPage = <TData = AxiosResponse<PageResponse>>(
+const getPage = <TData = AxiosResponse<DocumentResponse>>(
     workspaceId: string,
     pageId: string, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.default.get(
-      `http://ckw-page-service:8080/${workspaceId}/documents/${pageId}`,options
+      `/${workspaceId}/documents/${pageId}`,options
     );
   }
 
@@ -102,26 +102,26 @@ const deletePage = <TData = AxiosResponse<void>>(
     pageId: string, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.default.delete(
-      `http://ckw-page-service:8080/${workspaceId}/documents/${pageId}`,options
+      `/${workspaceId}/documents/${pageId}`,options
     );
   }
 
-const updatePage = <TData = AxiosResponse<PageResponse>>(
+const updatePage = <TData = AxiosResponse<DocumentResponse>>(
     workspaceId: string,
     pageId: string,
-    pageRequest: PageRequest, options?: AxiosRequestConfig
+    documentRequest: DocumentRequest, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.default.patch(
-      `http://ckw-page-service:8080/${workspaceId}/documents/${pageId}`,
-      pageRequest,options
+      `/${workspaceId}/documents/${pageId}`,
+      documentRequest,options
     );
   }
 
 return {getSnapshot,saveSnapshot,getPages,createPage,getPage,deletePage,updatePage}};
 export type GetSnapshotResult = AxiosResponse<SnapshotResponse>
 export type SaveSnapshotResult = AxiosResponse<void>
-export type GetPagesResult = AxiosResponse<PageResponse[]>
-export type CreatePageResult = AxiosResponse<PageResponse>
-export type GetPageResult = AxiosResponse<PageResponse>
+export type GetPagesResult = AxiosResponse<DocumentResponse[]>
+export type CreatePageResult = AxiosResponse<DocumentResponse>
+export type GetPageResult = AxiosResponse<DocumentResponse>
 export type DeletePageResult = AxiosResponse<void>
-export type UpdatePageResult = AxiosResponse<PageResponse>
+export type UpdatePageResult = AxiosResponse<DocumentResponse>

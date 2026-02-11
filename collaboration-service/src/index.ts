@@ -16,6 +16,7 @@ import { PageVersion } from "./page-version.ts";
 import { Doc } from "yjs";
 
 axios.defaults.headers["X-Page-Authorization"] = "INTERNAL";
+axios.defaults.baseURL = import.meta.env.BASE_URL;
 
 const PORT = Number(process.env.PORT || 8080);
 

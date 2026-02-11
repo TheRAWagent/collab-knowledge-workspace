@@ -75,7 +75,7 @@ export function TiptapEditor({
 
   const provider = useMemo(() => new HocuspocusProvider({
     name: pageId,
-    url: `ws://${import.meta.env.VITE_API_BASE_URL}/collaboration`,
+    url: `${(import.meta.env.VITE_API_BASE_URL as string).replace("https", "wss")}/collaboration`,
     document: ydoc,
   }), [pageId, ydoc]);
   const editor = useEditor({
@@ -127,7 +127,7 @@ export function TiptapEditor({
       }),
       CollaborationCaret.configure({
         provider: provider,
-        user: { name: data?.data.name, color: '#f4f4f4' }
+        user: { name: data?.data.name, color: Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0') }
       }),
       CodeBlockLowlight.configure({
         lowlight

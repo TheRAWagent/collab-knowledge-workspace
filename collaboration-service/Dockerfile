@@ -27,7 +27,7 @@ RUN bun orval
 RUN bun run build
 
 # === Release stage ===
-FROM dhi.io/bun:1.3-alpine3.22
+FROM dhi.io/bun:1-alpine3.22
 WORKDIR /usr/src/app
 
 COPY --from=install /temp/prod/node_modules node_modules
