@@ -2,9 +2,9 @@ import com.google.protobuf.gradle.id
 
 plugins {
     java
-    id("org.springframework.boot") version "3.5.10"
+    id("org.springframework.boot") version "4.0.2"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.google.protobuf") version "0.9.4"
+    id("com.google.protobuf") version "0.9.5"
 }
 
 group = "com.dj.ckw"
@@ -21,23 +21,27 @@ repositories {
     mavenCentral()
 }
 
-extra["springGrpcVersion"] = "0.12.0"
+extra["springGrpcVersion"] = "1.0.2"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("io.grpc:grpc-services")
-    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.flywaydb:flyway-core")
-    implementation("org.flywaydb:flyway-database-postgresql")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    testImplementation("org.springframework.security:spring-security-test")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
+    implementation("io.grpc:grpc-services")
+    implementation("org.flywaydb:flyway-database-postgresql")
+    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
     implementation("org.postgresql:postgresql")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-data-redis-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-security-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-scalar:2.8.15")
