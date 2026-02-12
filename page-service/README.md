@@ -11,7 +11,7 @@ Reactive persistence layer for documents and pages. Handles high-concurrency doc
 
 ## Tech Stack
 
-- **Spring Boot 3.5.9** (WebFlux)
+- **Spring Boot 4.0** (WebFlux)
 - **Spring Data R2DBC**
 - **PostgreSQL** (with R2DBC driver)
 - **Flyway**

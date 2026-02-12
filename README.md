@@ -28,7 +28,7 @@ Collaborative Knowledge Workspace is built using a microservices architecture wi
 ## Technology Stack
 
 ### Backend Services
-- **Java 25** with Spring Boot 3.5.x
+- **Java 25** with Spring Boot 4.0.x
 - **Spring Data JPA** for ORM
 - **Spring Data R2DBC** for reactive database access
 - **Spring Security** with JWT authentication
@@ -59,7 +59,7 @@ The entry point for all HTTP requests, handling routing, load balancing, and req
 
 **Location**: `./api-gateway`
 
-**Technologies**: Spring Cloud Gateway, Spring gRPC, Spring Boot 3.5
+**Technologies**: Spring Cloud Gateway, Spring gRPC, Spring Boot 4.0
 
 **Key Features**:
 - HTTP request routing

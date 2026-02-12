@@ -34,6 +34,6 @@ COPY --from=install /temp/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/dist ./dist
 COPY --from=prerelease /usr/src/app/package.json .
 
-EXPOSE 8080
+EXPOSE 8080 9091
 
 CMD ["bun", "dist/index.js"]

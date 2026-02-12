@@ -46,6 +46,7 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
     implementation("ch.qos.logback:logback-classic")
     implementation("net.logstash.logback:logstash-logback-encoder:9.0")
+    implementation("io.micrometer:micrometer-registry-prometheus")
 }
 
 dependencyManagement {

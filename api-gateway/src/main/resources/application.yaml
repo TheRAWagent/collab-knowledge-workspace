@@ -50,7 +50,7 @@ spring:
                 - name: Path
                   args:
                     patterns:
-                      - /user
+                      - /user/
                       - /user/verify-email
                 - name: Method
                   args:
@@ -78,7 +78,7 @@ spring:
                 - name: Path
                   args:
                     patterns:
-                      - /user
+                      - /user/
                       - /user/**
               filters:
                 - name: StripPrefix
@@ -211,6 +211,16 @@ logging:
     format:
       console: logstash
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
   tracing:
     sampling:
       probability: 1.0

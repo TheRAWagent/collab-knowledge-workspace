@@ -48,7 +48,7 @@ services:
     environment:
       - REDIS_HOST=cache
       - REDIS_PORT=6379
-      - BASE_URL=ckw-page-service:8080
+      - BASE_URL=http://page-service:8080
       - PORT=8080
     depends_on:
       cache:
@@ -179,12 +179,27 @@ services:
       - -target=all
       - -config.file=/etc/tempo.yaml
 
+  prometheus:
+    image: 192.168.29.125/prod/prometheus:3.9
+    networks:
+      - internal
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yaml
+      - --storage.tsdb.path=/prometheus
+
   grafana:
     image: 192.168.29.125/prod/grafana:12
     networks:
       - internal
     ports:
       - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
 
 networks:
   internal:
@@ -193,3 +208,5 @@ networks:
 volumes:
   ckw-postgres-data:
   tempo-data:
+  prometheus-data:
+  grafana-data:

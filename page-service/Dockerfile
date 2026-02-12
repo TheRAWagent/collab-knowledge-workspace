@@ -1,14 +1,18 @@
 FROM dhi.io/gradle:9-jdk25-alpine3.22-dev AS builder
 WORKDIR /home/gradle/project
 
+ENV GRADLE_USER_HOME=/cache
+
+COPY gradlew .
+COPY gradle gradle
 COPY build.gradle* build.gradle.kts* settings.gradle* settings.gradle.kts* gradle.properties* ./
 
 # Resolve and cache dependencies (fast layer). If this runs partially, fall back without failing the build.
-RUN gradle --no-daemon assemble -x test --no-parallel || true
+RUN --mount=type=cache,target=/cache ./gradlew --no-daemon dependencies || true
 
 # Copy the rest of the source and build the application
 COPY . .
-RUN gradle --no-daemon clean assemble -x test --no-parallel
+RUN --mount=type=cache,target=/cache ./gradlew --no-daemon build -x test
 
 # Consolidate the built artifact to a known path
 RUN mkdir -p /output && cp build/libs/**.jar /output/app.jar

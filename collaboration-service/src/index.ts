@@ -84,6 +84,28 @@ const server = new Server({
   }
 });
 
-server.listen().then(() => {
+await server.listen().then(() => {
   console.log(`🚀 Collaboration service (Hocuspocus) running on port ${PORT}`);
 });
+
+// Metrics Server
+import { register, collectDefaultMetrics } from "prom-client";
+
+register.setDefaultLabels({ application: 'collaboration-service' });
+
+collectDefaultMetrics();
+
+const METRICS_PORT = Number(process.env.METRICS_PORT || 9091);
+Bun.serve({
+  port: METRICS_PORT,
+  async fetch(req) {
+    const url = new URL(req.url);
+    if (url.pathname === "/metrics") {
+      return new Response(await register.metrics(), {
+        headers: { "Content-Type": register.contentType }
+      });
+    }
+    return new Response("Not Found", { status: 404 });
+  },
+});
+console.log(`🚀 Metrics server running on port ${METRICS_PORT}`);
