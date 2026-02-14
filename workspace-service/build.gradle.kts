@@ -2,9 +2,9 @@ import com.google.protobuf.gradle.id
 
 plugins {
     java
-    id("org.springframework.boot") version "4.0.2"
-    id("io.spring.dependency-management") version "1.1.7"
-    id("com.google.protobuf") version "0.9.5"
+    alias(libs.plugins.org.springframework.boot)
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.com.google.protobuf)
 }
 
 group = "com.dj.ckw"
@@ -13,15 +13,9 @@ description = "workspace-service"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(libs.versions.java.get().toInt())
     }
 }
-
-repositories {
-    mavenCentral()
-}
-
-extra["springGrpcVersion"] = "1.0.2"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -34,7 +28,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-scalar:2.8.15")
+    implementation(libs.springdoc.openapi.scalar)
     implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
     implementation("io.grpc:grpc-netty-shaded")
     modules {
@@ -45,23 +39,18 @@ dependencies {
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
     implementation("ch.qos.logback:logback-classic")
-    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
+    implementation(libs.logstash.logback.encoder)
     implementation("io.micrometer:micrometer-registry-prometheus")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.grpc:spring-grpc-dependencies:${property("springGrpcVersion")}")
-    }
+    implementation(platform(libs.spring.grpc.bom))
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc"
+        artifact = "com.google.protobuf:protoc:${libs.versions.protoc.get()}"
     }
     plugins {
         id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java"
+            artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.codegen.get()}"
         }
     }
     generateProtoTasks {

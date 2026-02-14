@@ -1,0 +1,43 @@
+[versions]
+# Java
+java = "25"
+
+# Platform
+spring-boot = "4.0.2"
+spring-cloud = "2025.1.1"
+spring-grpc = "1.0.2"
+spring-dependency-management = "1.1.7"
+
+# Protobuf code generation
+protobuf-plugin = "0.9.6"
+protoc = "4.33.5"
+grpc-codegen = "1.79.0"
+
+# AWS SDK
+aws-sdk = "2.41.4"
+
+# Security/Cryptography
+jjwt = "0.13.0"
+bouncycastle = "1.83"
+
+# OpenAPI
+springdoc = "3.0.1"
+
+# Observability
+logback = "9.0"
+
+[libraries]
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+springdoc-openapi-scalar = { module = "org.springdoc:springdoc-openapi-starter-webmvc-scalar", version.ref = "springdoc" }
+bouncycastle-provider = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+logstash-logback-encoder = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logback" }
+spring-grpc-bom = { module = "org.springframework.grpc:spring-grpc-dependencies", version.ref = "spring-grpc" }
+spring-cloud-bom = { module = "org.springframework.cloud:spring-cloud-dependencies" , version.ref = "spring-cloud" }
+aws-sdk-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws-sdk" }
+
+[plugins]
+org-springframework-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+com-google-protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
