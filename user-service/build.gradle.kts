@@ -32,6 +32,7 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
     implementation("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-redis-test")

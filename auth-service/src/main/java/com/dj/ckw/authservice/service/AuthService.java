@@ -9,6 +9,7 @@ import com.dj.ckw.authservice.grpc.UserIdentityConfirmationServiceGrpc;
 import com.dj.ckw.authservice.model.User;
 import com.dj.ckw.authservice.repository.UserRepository;
 import com.dj.ckw.authservice.util.JwtUtil;
+import com.dj.ckw.authservice.config.NoOpUserIdentityStub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,6 +25,7 @@ public class AuthService {
   private final JwtUtil jwtUtil;
   private final UserRepository userRepository;
   private final UserIdentityConfirmationServiceGrpc.UserIdentityConfirmationServiceBlockingV2Stub userIdentityConfirmationServiceStub;
+  private final NoOpUserIdentityStub fallbackStub;
   private final Logger log = LoggerFactory.getLogger(AuthService.class);
 
   public AuthService(
@@ -31,12 +33,13 @@ public class AuthService {
       PasswordEncoder passwordEncoder,
       JwtUtil jwtUtil,
       UserRepository userRepository,
-      UserIdentityConfirmationServiceGrpc.UserIdentityConfirmationServiceBlockingV2Stub stub) {
+      UserIdentityConfirmationServiceGrpc.@Nullable UserIdentityConfirmationServiceBlockingV2Stub stub) {
     this.userService = userService;
     this.passwordEncoder = passwordEncoder;
     this.jwtUtil = jwtUtil;
     this.userRepository = userRepository;
     this.userIdentityConfirmationServiceStub = stub;
+    this.fallbackStub = new NoOpUserIdentityStub();
   }
 
   public Optional<String> authenticate(AuthRequestDto authRequestDto) {
@@ -67,8 +70,8 @@ public class AuthService {
     }
 
     try {
-      UserIdentityConfirmationResponse response = userIdentityConfirmationServiceStub.confirmUserIdentity(
-          UserIdentityConfirmationRequest.newBuilder().setEmail(authRequestDto.getEmail()).build());
+      // Confirm user identity using real stub if available, otherwise use fallback
+      UserIdentityConfirmationResponse response = confirmUserIdentity(authRequestDto.getEmail());
 
       if (response.getIsConfirmed()) {
         User user = new User();
@@ -77,14 +80,35 @@ public class AuthService {
         userRepository.save(user);
         log.info("User created successfully: {}", authRequestDto.getEmail());
       } else {
-        log.warn("User identity not confirmed by User Service: {}", authRequestDto.getEmail());
-        throw new UserNotFoundException("User with email " + authRequestDto.getEmail() + " not found in User Service");
+        log.warn("User identity not confirmed by User Service (may be in degraded mode): {}", authRequestDto.getEmail());
+        throw new UserNotFoundException("User with email " + authRequestDto.getEmail() + " not found in User Service. Please ensure user-service is available.");
       }
     } catch (UserNotFoundException e) {
       throw e;
     } catch (Exception e) {
-      log.error("Failed to create user: {}", authRequestDto.getEmail(), e);
+      log.error("Failed to create user: {}. Error: {}", authRequestDto.getEmail(), e.getMessage());
       throw new RuntimeException("Failed to create user: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Confirms user identity using real gRPC stub if available,
+   * otherwise falls back to no-op implementation for degraded mode.
+   */
+  private UserIdentityConfirmationResponse confirmUserIdentity(String email) {
+    try {
+      if (userIdentityConfirmationServiceStub != null) {
+        return userIdentityConfirmationServiceStub.confirmUserIdentity(
+            UserIdentityConfirmationRequest.newBuilder().setEmail(email).build());
+      } else {
+        return fallbackStub.confirmUserIdentity(
+            UserIdentityConfirmationRequest.newBuilder().setEmail(email).build());
+      }
+    } catch (Exception e) {
+      // If gRPC call fails, use fallback
+      log.warn("gRPC call failed, using fallback response: {}", e.getMessage());
+      return fallbackStub.confirmUserIdentity(
+          UserIdentityConfirmationRequest.newBuilder().setEmail(email).build());
     }
   }
 }

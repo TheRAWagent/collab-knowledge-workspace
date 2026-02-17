@@ -25,6 +25,8 @@ dependencies {
     implementation("org.springframework:spring-jdbc")
     implementation("org.postgresql:r2dbc-postgresql")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("io.r2dbc:r2dbc-h2")
+    runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-r2dbc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")

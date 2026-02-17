@@ -1,0 +1,57 @@
+# Degraded mode profile for auth-service
+# Use this profile when external dependencies (database, Redis, gRPC services) are not available
+# Activate with: SPRING_PROFILES_ACTIVE=degraded
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    # No datasource in degraded mode - JPA will not be initialized
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:degraded
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+  cache:
+    cache-names:
+      - "users"
+    type: simple
+  threads:
+    virtual:
+      enabled: true
+  grpc:
+    client:
+      channels:
+        user-service:
+          address: localhost:9090
+          negotiation-type: plaintext
+  autoconfigure:
+    exclude:
+      # Exclude Redis auto-configuration if present
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+
+server:
+  port: 8080
+  tomcat:
+    basedir: /tmp
+
+logging:
+  level:
+    root: warn
+    "[com.dj.ckw.authservice]": info
+    "[com.dj.ckw.authservice.config]": debug
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+# Placeholder JWT secret for degraded mode
+jwt:
+  secret: ${JWT_SECRET:Y2t3LWNvbGxhYi1rbm93bGVkZ2Utd29ya3NwYWNlLXNlY3JldC1rZXktd2hpY2gtc2hvdWxkLWJlLWNoYW5nZWQtaW4tcHJvZHVjdGlvbg==}

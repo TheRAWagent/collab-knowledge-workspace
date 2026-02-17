@@ -206,7 +206,7 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: info
-    com.dj.ckw.apigateway: info
+    "[com.dj.ckw.apigateway]": info
   structured:
     format:
       console: logstash

@@ -40,7 +40,7 @@ public class PageAccessValidationGatewayFilterFactory extends AbstractGatewayFil
                 JsonNode node = objectMapper.readTree(
                         Base64.getDecoder().decode(userInfo.getBytes(StandardCharsets.UTF_8))
                 );
-                userId = node.get("id").asText();
+                userId = node.get("id").asString();
             } catch (JsonNodeException e) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();

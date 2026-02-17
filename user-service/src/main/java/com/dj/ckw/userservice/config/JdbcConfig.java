@@ -3,8 +3,10 @@ package com.dj.ckw.userservice.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.postgresql.util.PGobject;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -17,9 +19,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JDBC configuration with custom converters for PostgreSQL JSON types.
+ * Only loads when datasource is available.
+ * In degraded mode (no database), this configuration is skipped.
+ */
 @Configuration
+@ConditionalOnProperty(name = "spring.datasource.url")
 public class JdbcConfig extends AbstractJdbcConfiguration {
     @Bean
+    @Override
+    @NullMarked
     public JdbcCustomConversions jdbcCustomConversions() {
         final List<Converter<?, ?>> converters = new ArrayList<>();
         converters.add(EntityWritingConverter.INSTANCE);

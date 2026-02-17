@@ -26,6 +26,7 @@ dependencies {
     implementation("io.grpc:grpc-services")
     implementation("org.springframework.grpc:spring-grpc-client-spring-boot-starter")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-redis-test")

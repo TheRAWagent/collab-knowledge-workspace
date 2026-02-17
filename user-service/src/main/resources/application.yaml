@@ -2,27 +2,38 @@ spring:
   application:
     name: user-service
   datasource:
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
     hikari:
       maximum-pool-size: 5
       minimum-idle: 1
       idle-timeout: 30000
       max-lifetime: 600000
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
   threads:
     virtual:
       enabled: true
   flyway:
     locations: classpath:db/migration
+    enabled: ${SPRING_FLYWAY_ENABLED:false}
+
 server:
   tomcat:
     basedir: /app/tomcat-temp
+
 logging:
   config: classpath:logback-spring.xml
   level:
     root: info
-    com.dj.ckw.userservice: info
+    "[com.dj.ckw.userservice]": info
   structured:
     format:
       console: logstash
+
 management:
   endpoints:
     web:
@@ -33,13 +44,14 @@ management:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
   otlp:
     tracing:
       transport: grpc
       endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
       export:
         enabled: true
+
 otel:
   resource:
     attributes:

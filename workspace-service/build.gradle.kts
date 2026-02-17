@@ -25,6 +25,7 @@ dependencies {
     implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

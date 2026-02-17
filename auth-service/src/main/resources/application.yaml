@@ -2,18 +2,24 @@ spring:
   application:
     name: auth-service
   datasource:
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
     hikari:
       maximum-pool-size: 5
       minimum-idle: 1
       idle-timeout: 30000
       max-lifetime: 600000
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:none}
   cache:
     cache-names:
       - "users"
     redis:
       time-to-live: 10m
 
-    type: redis
+    type: ${SPRING_CACHE_TYPE:simple}
   threads:
     virtual:
       enabled: true
@@ -33,7 +39,7 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: info
-    com.dj.ckw.authservice: DEBUG
+    "[com.dj.ckw.authservice]": DEBUG
   structured:
     format:
       console: logstash
