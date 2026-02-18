@@ -16,36 +16,41 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class WorkspaceServiceGrpcClient {
-    private static final Logger log = LoggerFactory.getLogger(WorkspaceServiceGrpcClient.class);
-    private final WorkspaceServiceGrpc.WorkspaceServiceStub asyncStub;
+  private static final Logger log = LoggerFactory.getLogger(WorkspaceServiceGrpcClient.class);
+  private final WorkspaceServiceGrpc.WorkspaceServiceStub asyncStub;
 
-    public WorkspaceServiceGrpcClient(
-            @Value("${workspace.service.address:localhost}") String serverAddress,
-            @Value("${workspace.service.grpc.port:9090}") int serverPort,
-            ObservationRegistry observationRegistry) {
-        log.info("Connecting to Workspace service grpc server at {}:{}", serverAddress, serverPort);
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(serverAddress, serverPort).usePlaintext().intercept(new ObservationGrpcClientInterceptor(observationRegistry)).build();
-        this.asyncStub = WorkspaceServiceGrpc.newStub(channel);
-    }
+  protected WorkspaceServiceGrpcClient() {
+    this.asyncStub = null;
+  }
 
-    public Mono<PageAccessResponse> checkPageAccess(PageAccessRequest request) {
-        return Mono.create(sink -> {
-            asyncStub.checkPageAccess(request, new StreamObserver<>() {
-                @Override
-                public void onNext(PageAccessResponse value) {
-                    sink.success(value);
-                }
+  public WorkspaceServiceGrpcClient(
+      @Value("${workspace.service.address:localhost}") String serverAddress,
+      @Value("${workspace.service.grpc.port:9090}") int serverPort,
+      ObservationRegistry observationRegistry) {
+    log.info("Connecting to Workspace service grpc server at {}:{}", serverAddress, serverPort);
+    ManagedChannel channel = ManagedChannelBuilder.forAddress(serverAddress, serverPort).usePlaintext()
+        .intercept(new ObservationGrpcClientInterceptor(observationRegistry)).build();
+    this.asyncStub = WorkspaceServiceGrpc.newStub(channel);
+  }
 
-                @Override
-                public void onError(Throwable t) {
-                    log.error("Error from Workspace gRPC Service", t);
-                    sink.error(t);
-                }
+  public Mono<PageAccessResponse> checkPageAccess(PageAccessRequest request) {
+    return Mono.create(sink -> {
+      asyncStub.checkPageAccess(request, new StreamObserver<>() {
+        @Override
+        public void onNext(PageAccessResponse value) {
+          sink.success(value);
+        }
 
-                @Override
-                public void onCompleted() {
-                }
-            });
-        });
-    }
+        @Override
+        public void onError(Throwable t) {
+          log.error("Error from Workspace gRPC Service", t);
+          sink.error(t);
+        }
+
+        @Override
+        public void onCompleted() {
+        }
+      });
+    });
+  }
 }

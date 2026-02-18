@@ -8,13 +8,17 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+  protected UserService() {
+    this.userRepository = null;
+  }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
+  public UserService(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
+
+  public Optional<User> findByEmail(String email) {
+    return userRepository.findByEmail(email);
+  }
 }

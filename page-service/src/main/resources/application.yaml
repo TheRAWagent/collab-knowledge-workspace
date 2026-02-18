@@ -21,7 +21,7 @@ management:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
   otlp:
     tracing:
       transport: grpc
@@ -32,7 +32,7 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: info
-    com.dj.ckw.pageservice: info
+    "[com.dj.ckw.pageservice]": info
   structured:
     format:
       console: logstash

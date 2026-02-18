@@ -1,4 +1,4 @@
-name: ckw
+name: ckw-${ENVIRONMENT}
 
 services:
   postgres:
@@ -16,14 +16,14 @@ services:
       timeout: 5s
       retries: 5
 
-    image: 192.168.29.125/prod/postgres:18-alpine3.22
+    image: 192.168.29.125/${ENVIRONMENT}/postgres:18-alpine3.22
     networks:
       - internal
     ports:
       - "5432:5432"
     restart: unless-stopped
     volumes:
-      - ckw-postgres-data:/var/lib/postgresql
+      - postgres-data:/var/lib/postgresql
   cache:
     command:
       - redis-server
@@ -34,14 +34,14 @@ services:
       interval: 30s
       timeout: 5s
       retries: 5
-    image: 192.168.29.125/prod/redis:8
+    image: 192.168.29.125/${ENVIRONMENT}/redis:8
     networks:
       - internal
     restart: unless-stopped
     # No volumes, as data is stored in memory
 
   collaboration-service:
-    image: 192.168.29.125/prod/ckw-collaboration-service:latest
+    image: 192.168.29.125/${ENVIRONMENT}/collaboration-service:${VERSION}
     networks:
       - internal
     restart: unless-stopped
@@ -62,7 +62,7 @@ services:
           memory: 256M
 
   page-service:
-    image: 192.168.29.125/prod/ckw-page-service:latest
+    image: 192.168.29.125/${ENVIRONMENT}/page-service:${VERSION}
     networks:
       - internal
     env_file:
@@ -71,14 +71,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    mem_limit: 512M
+    mem_limit: 768M
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
 
   workspace-service:
-    image: 192.168.29.125/prod/ckw-workspace-service:latest
+    image: 192.168.29.125/${ENVIRONMENT}/workspace-service:${VERSION}
     networks:
       - internal
     env_file:
@@ -87,14 +87,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    mem_limit: 512M
+    mem_limit: 768M
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
 
   user-service:
-    image: 192.168.29.125/prod/ckw-user-service:latest
+    image: 192.168.29.125/${ENVIRONMENT}/user-service:${VERSION}
     networks:
       - internal
     env_file:
@@ -103,14 +103,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    mem_limit: 512M
+    mem_limit: 768M
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
 
   auth-service:
-    image: 192.168.29.125/prod/ckw-auth-service:latest
+    image: 192.168.29.125/${ENVIRONMENT}/auth-service:${VERSION}
     networks:
       - internal
     env_file:
@@ -121,14 +121,14 @@ services:
         condition: service_healthy
       user-service:
         condition: service_started
-    mem_limit: 512M
+    mem_limit: 768M
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
 
   api-gateway:
-    image: 192.168.29.125/prod/ckw-api-gateway:latest
+    image: 192.168.29.125/${ENVIRONMENT}/api-gateway:${VERSION}
     networks:
       - internal
     env_file:
@@ -145,11 +145,11 @@ services:
         condition: service_started
       collaboration-service:
         condition: service_started
-    mem_limit: 512M
+    mem_limit: 768M
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
     ports:
       - "8080:8080"
 
@@ -206,7 +206,7 @@ networks:
     driver: bridge
 
 volumes:
-  ckw-postgres-data:
+  postgres-data:
   tempo-data:
   prometheus-data:
   grafana-data:

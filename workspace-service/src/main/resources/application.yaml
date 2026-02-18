@@ -10,14 +10,11 @@ spring:
   threads:
     virtual:
       enabled: true
-server:
-  tomcat:
-    basedir: /app/tomcat-temp
 logging:
   config: classpath:logback-spring.xml
   level:
     root: info
-    com.dj.ckw.workspaceservice: info
+    "[com.dj.ckw.workspaceservice]": info
   structured:
     format:
       console: logstash

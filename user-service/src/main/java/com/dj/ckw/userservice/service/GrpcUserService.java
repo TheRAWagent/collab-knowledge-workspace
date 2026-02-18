@@ -15,33 +15,38 @@ import java.util.Optional;
 
 @Service
 public class GrpcUserService extends UserIdentityConfirmationServiceGrpc.UserIdentityConfirmationServiceImplBase {
-    private static final Logger log = LoggerFactory.getLogger(GrpcUserService.class);
-    private final UserRepository userRepository;
+  private static final Logger log = LoggerFactory.getLogger(GrpcUserService.class);
+  private final UserRepository userRepository;
 
-    public GrpcUserService(UserRepository userRepository) {
-        super();
-        this.userRepository = userRepository;
-        log.info("GrpcUserService initialized");
+  protected GrpcUserService() {
+    this.userRepository = null;
+  }
+
+  public GrpcUserService(UserRepository userRepository) {
+    super();
+    this.userRepository = userRepository;
+    log.info("GrpcUserService initialized");
+  }
+
+  @Override
+  public void confirmUserIdentity(UserIdentityConfirmationRequest request,
+      StreamObserver<UserIdentityConfirmationResponse> responseStreamObserver) {
+    try {
+      Optional<User> user = userRepository.findByEmail(request.getEmail());
+
+      if (user.isEmpty()) {
+        throw new UserNotFoundException(request.getEmail());
+      }
+
+      UserIdentityConfirmationResponse response = UserIdentityConfirmationResponse.newBuilder()
+          .setIsConfirmed(user.get().getVerified())
+          .build();
+
+      responseStreamObserver.onNext(response);
+      responseStreamObserver.onCompleted();
+    } catch (UserNotFoundException e) {
+      responseStreamObserver.onError(e);
+      responseStreamObserver.onCompleted();
     }
-
-    @Override
-    public void confirmUserIdentity(UserIdentityConfirmationRequest request, StreamObserver<UserIdentityConfirmationResponse> responseStreamObserver) {
-        try {
-            Optional<User> user = userRepository.findByEmail(request.getEmail());
-
-            if(user.isEmpty()) {
-                throw new UserNotFoundException(request.getEmail());
-            }
-
-            UserIdentityConfirmationResponse response = UserIdentityConfirmationResponse.newBuilder()
-                    .setIsConfirmed(user.get().getVerified())
-                    .build();
-
-            responseStreamObserver.onNext(response);
-            responseStreamObserver.onCompleted();
-        } catch (UserNotFoundException e) {
-            responseStreamObserver.onError(e);
-            responseStreamObserver.onCompleted();
-        }
-    }
+  }
 }

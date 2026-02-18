@@ -18,83 +18,85 @@ import java.util.UUID;
 @Service
 public class SnapshotService {
 
-    private static final Logger log = LoggerFactory.getLogger(SnapshotService.class);
-    private final SnapshotRepository snapshotRepository;
-    private final ObjectMapper objectMapper;
+  private static final Logger log = LoggerFactory.getLogger(SnapshotService.class);
+  private final SnapshotRepository snapshotRepository;
+  private final ObjectMapper objectMapper;
 
-    public SnapshotService(SnapshotRepository snapshotRepository, ObjectMapper objectMapper) {
-        this.snapshotRepository = snapshotRepository;
-        this.objectMapper = objectMapper;
-    }
+  protected SnapshotService() {
+    this.snapshotRepository = null;
+    this.objectMapper = null;
+  }
 
-    public Mono<Void> persist(
-            UUID documentId,
-            BlockSnapshotRequest req
-    ) {
-        try {
-            String contentJson;
-            try {
-                contentJson = objectMapper.writeValueAsString(req.getContent());
-                JsonNode normalized = objectMapper.readTree(contentJson);
-                contentJson = normalized.toString();
-            } catch (JsonProcessingException e) {
-                log.error("Error serializing snapshot content", e);
-                return Mono.error(new RuntimeException("Failed to serialize snapshot content", e));
+  public SnapshotService(SnapshotRepository snapshotRepository, ObjectMapper objectMapper) {
+    this.snapshotRepository = snapshotRepository;
+    this.objectMapper = objectMapper;
+  }
+
+  public Mono<Void> persist(
+      UUID documentId,
+      BlockSnapshotRequest req) {
+    try {
+      String contentJson;
+      try {
+        contentJson = objectMapper.writeValueAsString(req.getContent());
+        JsonNode normalized = objectMapper.readTree(contentJson);
+        contentJson = normalized.toString();
+      } catch (JsonProcessingException e) {
+        log.error("Error serializing snapshot content", e);
+        return Mono.error(new RuntimeException("Failed to serialize snapshot content", e));
+      }
+
+      String finalContentJson = contentJson;
+      return snapshotRepository.findByDocumentId(documentId)
+          .flatMap(existing -> {
+            // UPDATE CASE
+            if (existing.getVersion() >= req.getVersion()) {
+              log.info("Existing snapshot version {} is greater than or equal to request version {}, skipping update.",
+                  existing.getVersion(), req.getVersion());
+              return Mono.just(existing);
             }
-
-            String finalContentJson = contentJson;
-            return snapshotRepository.findByDocumentId(documentId)
-                    .flatMap(existing -> {
-                        // UPDATE CASE
-                        if (existing.getVersion() >= req.getVersion()) {
-                            log.info("Existing snapshot version {} is greater than or equal to request version {}, skipping update.", existing.getVersion(), req.getVersion());
-                            return Mono.just(existing);
-                        }
-                        existing.setVersion((long) req.getVersion());
-                        existing.setSchemaVersion((long) req.getSchemaVersion());
-                        existing.setGeneratedAt(req.getGeneratedAt());
-                        existing.setUpdatedBy(req.getUpdatedBy());
-                        existing.setSource(req.getSource());
-                        existing.setContentJson(Json.of(finalContentJson));
-                        return snapshotRepository.save(existing);
-                    })
-                    .switchIfEmpty(
-                            // INSERT CASE
-                            Mono.defer(() -> {
-                                        SnapshotEntity snapshotEntity = new SnapshotEntity();
-                                        snapshotEntity.setDocumentId(documentId);
-                                        snapshotEntity.setVersion((long) req.getVersion());
-                                        snapshotEntity.setSchemaVersion((long) req.getSchemaVersion());
-                                        snapshotEntity.setGeneratedAt(req.getGeneratedAt());
-                                        snapshotEntity.setUpdatedBy(req.getUpdatedBy());
-                                        snapshotEntity.setSource(req.getSource());
-                                        snapshotEntity.setContentJson(Json.of(finalContentJson));
-                                        return snapshotRepository.save(snapshotEntity);
-                                    }
-                            )
-                    )
-                    .then();
-        } catch (Exception e) {
-            log.error("Error persisting snapshot for documentId: {}", documentId, e);
-            log.error("Request data: {}", req.toString(), e);
-            log.error("Exception message: {}", e.getMessage(), e);
-            log.error("Stack trace: ", e);
-            return Mono.error(new RuntimeException("Failed to persist snapshot", e));
-        }
+            existing.setVersion((long) req.getVersion());
+            existing.setSchemaVersion((long) req.getSchemaVersion());
+            existing.setGeneratedAt(req.getGeneratedAt());
+            existing.setUpdatedBy(req.getUpdatedBy());
+            existing.setSource(req.getSource());
+            existing.setContentJson(Json.of(finalContentJson));
+            return snapshotRepository.save(existing);
+          })
+          .switchIfEmpty(
+              // INSERT CASE
+              Mono.defer(() -> {
+                SnapshotEntity snapshotEntity = new SnapshotEntity();
+                snapshotEntity.setDocumentId(documentId);
+                snapshotEntity.setVersion((long) req.getVersion());
+                snapshotEntity.setSchemaVersion((long) req.getSchemaVersion());
+                snapshotEntity.setGeneratedAt(req.getGeneratedAt());
+                snapshotEntity.setUpdatedBy(req.getUpdatedBy());
+                snapshotEntity.setSource(req.getSource());
+                snapshotEntity.setContentJson(Json.of(finalContentJson));
+                return snapshotRepository.save(snapshotEntity);
+              }))
+          .then();
+    } catch (Exception e) {
+      log.error("Error persisting snapshot for documentId: {}", documentId, e);
+      log.error("Request data: {}", req.toString(), e);
+      log.error("Exception message: {}", e.getMessage(), e);
+      log.error("Stack trace: ", e);
+      return Mono.error(new RuntimeException("Failed to persist snapshot", e));
     }
+  }
 
-    public Mono<SnapshotResponse> getSnapshot(UUID documentId) {
-        return snapshotRepository.findByDocumentId(documentId)
-                .switchIfEmpty(Mono.error(
-                        new IllegalArgumentException("Snapshot not found for documentId: " + documentId)))
-                .map(snap -> new SnapshotResponse(
-                        snap.getVersion(),
-                        snap.getSchemaVersion(),
-                        snap.getGeneratedAt(),
-                        snap.getUpdatedBy(),
-                        snap.getSource(),
-                        snap.getContentJson().asString()
-                ));
-    }
+  public Mono<SnapshotResponse> getSnapshot(UUID documentId) {
+    return snapshotRepository.findByDocumentId(documentId)
+        .switchIfEmpty(Mono.error(
+            new IllegalArgumentException("Snapshot not found for documentId: " + documentId)))
+        .map(snap -> new SnapshotResponse(
+            snap.getVersion(),
+            snap.getSchemaVersion(),
+            snap.getGeneratedAt(),
+            snap.getUpdatedBy(),
+            snap.getSource(),
+            snap.getContentJson().asString()));
+  }
 
 }

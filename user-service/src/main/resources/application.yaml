@@ -21,10 +21,6 @@ spring:
     locations: classpath:db/migration
     enabled: ${SPRING_FLYWAY_ENABLED:false}
 
-server:
-  tomcat:
-    basedir: /app/tomcat-temp
-
 logging:
   config: classpath:logback-spring.xml
   level:

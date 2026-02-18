@@ -21,13 +21,13 @@ subprojects {
 
             buildCache {
                 volume {
-                    name.set("pack-build-cache")
+                    name.set("pack-build-cache-${project.name}")
                 }
             }
 
             launchCache {
                 volume {
-                    name.set("pack-launch-cache")
+                    name.set("pack-launch-cache-${project.name}")
                 }
             }
 
@@ -46,11 +46,14 @@ subprojects {
             environment.set(
                 mapOf(
                     "BP_JVM_VERSION" to libs.versions.java.get(),
-                    "BP_JVM_JLINK_ENABLED" to "true",
                     "BP_SPRING_CLOUD_BINDINGS_DISABLED" to "true",
-                    "BP_JVM_CDS_ENABLED" to "true",
-                    "SPRING_PROFILES_ACTIVE" to "build"
-
+                    "SPRING_PROFILES_ACTIVE" to "build",
+                    "BPL_JVM_THREAD_COUNT" to "20",
+                    "BPL_JVM_HEAD_ROOM" to "15",
+                    "JAVA_TOOL_OPTIONS" to """
+                        -XX:ReservedCodeCacheSize=128M
+                        -Xss512k
+                    """
                 )
             )
             publish.set(registry.isPresent)
