@@ -34,15 +34,6 @@ public class UserService {
   private final EmailVerificationsRepository emailVerificationsRepository;
   private final OtpService otpService;
 
-  protected UserService() {
-    this.userRepository = null;
-    this.requestInfo = null;
-    this.redisTemplate = null;
-    this.objectMapper = null;
-    this.emailVerificationsRepository = null;
-    this.otpService = null;
-  }
-
   public UserService(UserRepository userRepository, RequestInfo requestInfo,
       StringRedisTemplate redisTemplate, ObjectMapper objectMapper,
       EmailVerificationsRepository emailVerificationsRepository, OtpService otpService) {

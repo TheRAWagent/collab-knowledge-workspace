@@ -17,11 +17,6 @@ public class EmailServiceImpl implements EmailService {
   private final SesV2Client sesV2Client;
   private final String fromEmail;
 
-  protected EmailServiceImpl() {
-    this.sesV2Client = null;
-    this.fromEmail = null;
-  }
-
   public EmailServiceImpl(@Value("${SES_FROM_EMAIL:}") String fromEmail, SesV2Client sesV2Client) {
     this.sesV2Client = sesV2Client;
     this.fromEmail = fromEmail;

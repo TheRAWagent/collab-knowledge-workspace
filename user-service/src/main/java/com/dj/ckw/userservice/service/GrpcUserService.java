@@ -18,10 +18,6 @@ public class GrpcUserService extends UserIdentityConfirmationServiceGrpc.UserIde
   private static final Logger log = LoggerFactory.getLogger(GrpcUserService.class);
   private final UserRepository userRepository;
 
-  protected GrpcUserService() {
-    this.userRepository = null;
-  }
-
   public GrpcUserService(UserRepository userRepository) {
     super();
     this.userRepository = userRepository;

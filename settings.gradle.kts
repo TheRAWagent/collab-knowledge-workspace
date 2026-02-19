@@ -11,6 +11,7 @@ include("auth-service")
 include("user-service")
 include("page-service")
 include("workspace-service")
+include("admin")
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)

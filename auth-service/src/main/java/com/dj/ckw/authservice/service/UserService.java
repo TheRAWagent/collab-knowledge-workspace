@@ -10,10 +10,6 @@ import java.util.Optional;
 public class UserService {
   private final UserRepository userRepository;
 
-  protected UserService() {
-    this.userRepository = null;
-  }
-
   public UserService(UserRepository userRepository) {
     this.userRepository = userRepository;
   }

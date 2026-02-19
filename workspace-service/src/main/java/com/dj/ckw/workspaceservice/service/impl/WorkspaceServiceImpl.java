@@ -32,11 +32,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
   private final WorkspaceRepository workspaceRepository;
   private final WorkspaceMemberRepository workspaceMemberRepository;
 
-  protected WorkspaceServiceImpl() {
-    this.workspaceRepository = null;
-    this.workspaceMemberRepository = null;
-  }
-
   public WorkspaceServiceImpl(WorkspaceRepository workspaceRepository,
       WorkspaceMemberRepository workspaceMemberRepository) {
     this.workspaceRepository = workspaceRepository;

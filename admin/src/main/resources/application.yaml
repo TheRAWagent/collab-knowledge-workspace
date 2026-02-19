@@ -1,0 +1,57 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: admin-server
+  cloud:
+    discovery:
+      client:
+        simple:
+          instances:
+            admin-server:
+              - uri: http://admin:9090
+                metadata:
+                  "[management.context-path]": /actuator
+            api-gateway:
+              - uri: http://api-gateway:8080
+                metadata:
+                  "[management.context-path]": /actuator
+            auth-service:
+              - uri: http://auth-service:8080
+                metadata:
+                  "[management.context-path]": /actuator
+            user-service:
+              - uri: http://user-service:8080
+                metadata:
+                  "[management.context-path]": /actuator
+            workspace-service:
+              - uri: http://workspace-service:8080
+                metadata:
+                  "[management.context-path]": /actuator
+            page-service:
+              - uri: http://page-service:8080
+                metadata:
+                  "[management.context-path]": /actuator
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+logging:
+  level:
+    de:
+      codecentric:
+        boot:
+          admin: INFO
+    org:
+      springframework:
+        cloud: INFO

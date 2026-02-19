@@ -22,11 +22,6 @@ public class SnapshotService {
   private final SnapshotRepository snapshotRepository;
   private final ObjectMapper objectMapper;
 
-  protected SnapshotService() {
-    this.snapshotRepository = null;
-    this.objectMapper = null;
-  }
-
   public SnapshotService(SnapshotRepository snapshotRepository, ObjectMapper objectMapper) {
     this.snapshotRepository = snapshotRepository;
     this.objectMapper = objectMapper;

@@ -25,6 +25,7 @@ springdoc = "3.0.1"
 
 # Observability
 logback = "9.0"
+spring-boot-admin = "4.0.0"
 
 [libraries]
 jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
@@ -36,6 +37,7 @@ logstash-logback-encoder = { module = "net.logstash.logback:logstash-logback-enc
 spring-grpc-bom = { module = "org.springframework.grpc:spring-grpc-dependencies", version.ref = "spring-grpc" }
 spring-cloud-bom = { module = "org.springframework.cloud:spring-cloud-dependencies" , version.ref = "spring-cloud" }
 aws-sdk-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws-sdk" }
+spring-boot-admin-bom = { module = "de.codecentric:spring-boot-admin-dependencies", version.ref = "spring-boot-admin" }
 
 [plugins]
 org-springframework-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

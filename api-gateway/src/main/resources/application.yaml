@@ -16,6 +16,8 @@ spring:
                       - /auth/register
                       - /auth/verify
                       - /auth/logout
+                      - /auth/forgot-password/initiate
+                      - /auth/forgot-password/reset
               filters:
                 - name: StripPrefix
                   args:
@@ -177,26 +179,26 @@ spring:
                 - name: Path
                   args:
                     patterns:
+                      - /collaboration
                       - /collaboration/**
               filters:
                 - name: StripPrefix
                   args:
                     part: 1
                 - name: JwtValidation
-
           globalcors:
             cors-configurations:
               "[/**]":
-                          allowedOrigins: "${API_GATEWAY_ALLOWED_ORIGINS}"
-                          allowedMethods:
-                            - GET
-                            - POST
-                            - PUT
-                            - DELETE
-                            - OPTIONS
-                            - PATCH
-                          allowedHeaders: "*"
-                          allowCredentials: true
+                allowedOrigins: "${API_GATEWAY_ALLOWED_ORIGINS}"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                  - PATCH
+                allowedHeaders: "*"
+                allowCredentials: true
           httpclient:
             websocket:
               max-frame-payload-length: 65536
@@ -214,7 +216,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: "*"
   metrics:
     tags:
       application: ${spring.application.name}

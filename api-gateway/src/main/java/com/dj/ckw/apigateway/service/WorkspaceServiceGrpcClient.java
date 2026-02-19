@@ -19,10 +19,6 @@ public class WorkspaceServiceGrpcClient {
   private static final Logger log = LoggerFactory.getLogger(WorkspaceServiceGrpcClient.class);
   private final WorkspaceServiceGrpc.WorkspaceServiceStub asyncStub;
 
-  protected WorkspaceServiceGrpcClient() {
-    this.asyncStub = null;
-  }
-
   public WorkspaceServiceGrpcClient(
       @Value("${workspace.service.address:localhost}") String serverAddress,
       @Value("${workspace.service.grpc.port:9090}") int serverPort,

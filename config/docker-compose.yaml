@@ -153,6 +153,20 @@ services:
     ports:
       - "8080:8080"
 
+  admin:
+    image: 192.168.29.125/${ENVIRONMENT}/admin:${VERSION}
+    networks:
+      - internal
+    restart: unless-stopped
+    mem_limit: 512M
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    ports:
+      - "9091:9090" # Host port 9091 maps to container port 9090 (Admin UI)
+
+
   otel-collector:
     image: 192.168.29.125/prod/opentelemetry-collector:0
     networks:

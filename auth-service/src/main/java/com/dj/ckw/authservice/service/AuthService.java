@@ -31,15 +31,6 @@ public class AuthService {
   private final NoOpUserIdentityStub fallbackStub;
   private final Logger log = LoggerFactory.getLogger(AuthService.class);
 
-  protected AuthService() {
-    this.userService = null;
-    this.passwordEncoder = null;
-    this.jwtUtil = null;
-    this.userRepository = null;
-    this.userIdentityConfirmationServiceStub = null;
-    this.fallbackStub = null;
-  }
-
   public AuthService(
       UserService userService,
       PasswordEncoder passwordEncoder,
