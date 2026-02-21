@@ -3,7 +3,7 @@
 java = "25"
 
 # Platform
-spring-boot = "4.0.2"
+spring-boot = "4.0.3"
 spring-cloud = "2025.1.1"
 spring-grpc = "1.0.2"
 spring-dependency-management = "1.1.7"
