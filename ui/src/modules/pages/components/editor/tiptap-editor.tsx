@@ -21,7 +21,7 @@ import Heading from "@tiptap/extension-heading";
 import Text from "@tiptap/extension-text";
 import Blockquote from "@tiptap/extension-blockquote";
 import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list';
-import { UndoRedo } from "@tiptap/extensions";
+import UndoRedo from "@tiptap/extension-history";
 import CodeBlock from "@tiptap/extension-code-block";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import Paragraph from "@tiptap/extension-paragraph";
@@ -51,7 +51,22 @@ import CollaborationCaret from "@tiptap/extension-collaboration-caret";
 import { nodeWithId } from "@/lib/node-with-id";
 import { useParams } from "@tanstack/react-router";
 import { useGetUser } from "@/modules/users/api.ts";
-import { all, createLowlight } from "lowlight";
+import { createLowlight } from "lowlight";
+import javascript from "highlight.js/lib/languages/javascript";
+import typescript from "highlight.js/lib/languages/typescript";
+import python from "highlight.js/lib/languages/python";
+import java from "highlight.js/lib/languages/java";
+import css from "highlight.js/lib/languages/css";
+import xml from "highlight.js/lib/languages/xml";
+import json from "highlight.js/lib/languages/json";
+import bash from "highlight.js/lib/languages/bash";
+import sql from "highlight.js/lib/languages/sql";
+import yaml from "highlight.js/lib/languages/yaml";
+import markdown from "highlight.js/lib/languages/markdown";
+import go from "highlight.js/lib/languages/go";
+import rust from "highlight.js/lib/languages/rust";
+import dockerfile from "highlight.js/lib/languages/dockerfile";
+import cpp from "highlight.js/lib/languages/cpp"
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
 interface TiptapEditorProps {
@@ -62,7 +77,26 @@ interface TiptapEditorProps {
 
 const ydoc = new Doc();
 
-const lowlight = createLowlight(all);
+const lowlight = createLowlight();
+lowlight.register("javascript", javascript);
+lowlight.register("js", javascript);
+lowlight.register("typescript", typescript);
+lowlight.register("ts", typescript);
+lowlight.register("python", python);
+lowlight.register("java", java);
+lowlight.register("css", css);
+lowlight.register("html", xml);
+lowlight.register("xml", xml);
+lowlight.register("json", json);
+lowlight.register("bash", bash);
+lowlight.register("shell", bash);
+lowlight.register("sql", sql);
+lowlight.register("yaml", yaml);
+lowlight.register("markdown", markdown);
+lowlight.register("go", go);
+lowlight.register("rust", rust);
+lowlight.register("dockerfile", dockerfile);
+lowlight.register("cpp", cpp);
 
 export function TiptapEditor({
   initialContent,
