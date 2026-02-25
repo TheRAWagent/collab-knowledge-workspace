@@ -42,7 +42,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation(libs.springdoc.openapi.scalar)
+    implementation(libs.springdoc.openapi.webmvc.scalar)
     implementation(platform(libs.aws.sdk.bom))
     implementation("software.amazon.awssdk:sesv2")
     implementation(libs.bouncycastle.provider)

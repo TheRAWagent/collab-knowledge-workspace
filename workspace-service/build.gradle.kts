@@ -29,7 +29,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation(libs.springdoc.openapi.scalar)
+    implementation(libs.springdoc.openapi.webmvc.scalar)
     implementation("io.grpc:grpc-netty-shaded")
     modules {
         module("io.grpc:grpc-netty") {

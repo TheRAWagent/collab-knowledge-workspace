@@ -33,7 +33,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation(libs.springdoc.openapi.scalar)
+    implementation(libs.springdoc.openapi.webflux.scalar)
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
     implementation("ch.qos.logback:logback-classic")

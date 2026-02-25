@@ -37,7 +37,7 @@ dependencies {
     implementation(libs.jjwt.api)
     implementation(libs.jjwt.impl)
     implementation(libs.jjwt.jackson)
-    implementation(libs.springdoc.openapi.scalar)
+    implementation(libs.springdoc.openapi.webmvc.scalar)
     implementation(libs.bouncycastle.provider)
     implementation("org.springframework.boot:spring-boot-starter-json")
     implementation("ch.qos.logback:logback-classic")
