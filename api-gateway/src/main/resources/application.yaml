@@ -216,7 +216,19 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include:
+          - health
+          - info
+          - prometheus
+          - metrics
+          - loggers
+          - mappings
+          - threaddump
+          - heapdump
+          - env
+          - configprops
+          - beans
+          - mappings
   metrics:
     tags:
       application: ${spring.application.name}
