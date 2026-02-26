@@ -36,8 +36,7 @@ dependencies {
             replacedBy("io.grpc:grpc-netty-shaded", "Use Netty shaded instead of regular Netty")
         }
     }
-    implementation("io.micrometer:micrometer-tracing-bridge-otel")
-    implementation("io.opentelemetry:opentelemetry-exporter-otlp")
+    implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     implementation("ch.qos.logback:logback-classic")
     implementation(libs.logstash.logback.encoder)
     implementation("io.micrometer:micrometer-registry-prometheus")

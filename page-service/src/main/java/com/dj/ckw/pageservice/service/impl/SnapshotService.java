@@ -4,9 +4,9 @@ import com.dj.ckw.pageservice.dto.BlockSnapshotRequest;
 import com.dj.ckw.pageservice.dto.SnapshotResponse;
 import com.dj.ckw.pageservice.model.SnapshotEntity;
 import com.dj.ckw.pageservice.repository.SnapshotRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.JsonNodeException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import io.r2dbc.postgresql.codec.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class SnapshotService {
         contentJson = objectMapper.writeValueAsString(req.getContent());
         JsonNode normalized = objectMapper.readTree(contentJson);
         contentJson = normalized.toString();
-      } catch (JsonProcessingException e) {
+      } catch (JsonNodeException e) {
         log.error("Error serializing snapshot content", e);
         return Mono.error(new RuntimeException("Failed to serialize snapshot content", e));
       }

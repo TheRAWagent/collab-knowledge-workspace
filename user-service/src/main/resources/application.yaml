@@ -41,14 +41,16 @@ management:
     distribution:
       percentiles-histogram:
         "[http.server.requests]": true
-  otlp:
+  tracing:
+    sampling:
+      probability: 1.0
+  opentelemetry:
     tracing:
-      transport: grpc
-      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
       export:
-        enabled: true
-
-otel:
-  resource:
-    attributes:
-      service.name: user-service
+        otlp:
+          transport: grpc
+          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
+  otlp:
+    metrics:
+      export:
+        enabled: false

@@ -1,8 +1,8 @@
 package com.dj.ckw.userservice.config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.JsonNodeException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.postgresql.util.PGobject;
@@ -51,7 +51,7 @@ public class JdbcConfig extends AbstractJdbcConfiguration {
                 jsonObject.setValue(objectMapper.writeValueAsString(source));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-            } catch (JsonProcessingException e) {
+            } catch (JsonNodeException e) {
                 e.printStackTrace();
             }
             return jsonObject;
@@ -68,7 +68,7 @@ public class JdbcConfig extends AbstractJdbcConfiguration {
             String source = pgObject.getValue();
             try {
                 return objectMapper.readTree(source);
-            } catch (JsonProcessingException e) {
+            } catch (JsonNodeException e) {
                 e.printStackTrace();
             }
             return null;

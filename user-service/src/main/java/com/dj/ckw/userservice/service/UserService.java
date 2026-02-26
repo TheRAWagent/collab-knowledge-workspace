@@ -11,10 +11,10 @@ import com.dj.ckw.userservice.model.RequestInfo;
 import com.dj.ckw.userservice.model.User;
 import com.dj.ckw.userservice.repository.EmailVerificationsRepository;
 import com.dj.ckw.userservice.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.JsonNodeException;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -158,7 +158,7 @@ public class UserService {
       String jsonEvent = objectMapper.writeValueAsString(event);
       redisTemplate.convertAndSend(RedisPubSubConfig.USER_EVENTS_TOPIC, jsonEvent);
       log.info("Published event: {} to Redis", eventType);
-    } catch (JsonProcessingException e) {
+    } catch (JsonNodeException e) {
       log.error("Failed to publish event: {}", eventType, e);
     }
   }

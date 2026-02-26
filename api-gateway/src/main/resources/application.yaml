@@ -161,6 +161,19 @@ spring:
                 - name: StripPrefix
                   args:
                     part: 1
+            - id: page-directory-route
+              uri: http://page-service:8080
+              predicates:
+                - name: Path
+                  args:
+                    patterns:
+                      - /workspace/{workspace_id}/directories/**
+              filters:
+                - name: JwtValidation
+                - name: PageAccessValidation
+                - name: StripPrefix
+                  args:
+                    part: 1
             - id: page-docs-route
               uri: http://page-service:8080
               predicates:
@@ -238,13 +251,13 @@ management:
   tracing:
     sampling:
       probability: 1.0
-  otlp:
+  opentelemetry:
     tracing:
-      transport: grpc
-      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
       export:
-        enabled: true
-otel:
-  resource:
-    attributes:
-      service.name: api-gateway
+        otlp:
+          transport: grpc
+          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
+  otlp:
+    metrics:
+      export:
+        enabled: false
