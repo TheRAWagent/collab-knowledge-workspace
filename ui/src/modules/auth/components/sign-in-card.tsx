@@ -16,7 +16,7 @@ import { useRouter } from "@tanstack/react-router";
 import { useLogin } from "../api";
 import { toast } from "sonner";
 
-export default function AuthenticationCard() {
+export default function SignInCard() {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof loginBody>>({
@@ -34,7 +34,7 @@ export default function AuthenticationCard() {
         router.navigate({ to: "/" });
       },
       onError: (error) => {
-        if(error.status === 401) {
+        if (error.status === 401) {
           toast.error("Invalid credentials");
         } else {
           toast.error("Something went wrong");

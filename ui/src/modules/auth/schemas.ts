@@ -22,6 +22,15 @@ export const createUserBody = zod.object({
 
 
 /**
+ * Invalidates the session or token and logs the user out
+ * @summary Logout
+ */
+export const logoutHeader = zod.object({
+  "Authorization": zod.string()
+})
+
+
+/**
  * @summary Generate Token on user login
  */
 
@@ -33,6 +42,32 @@ export const loginBodyPasswordRegExp = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\
 export const loginBody = zod.object({
   "email": zod.string().email().min(1),
   "password": zod.string().min(1).regex(loginBodyPasswordRegExp)
+})
+
+
+/**
+ * @summary Reset password using code
+ */
+
+
+
+
+
+export const resetPasswordBody = zod.object({
+  "email": zod.string().email().min(1),
+  "code": zod.string().min(1),
+  "newPassword": zod.string().min(1)
+})
+
+
+/**
+ * @summary Initiate password reset
+ */
+
+
+
+export const initiatePasswordResetBody = zod.object({
+  "email": zod.string().email().min(1)
 })
 
 

@@ -1,5 +1,6 @@
 package com.dj.ckw.authservice.service;
 
+import com.dj.ckw.authservice.config.RedisPubSubConfig;
 import com.dj.ckw.authservice.dto.AuthRequestDto;
 import com.dj.ckw.authservice.dto.ResetPasswordRequestDto;
 import com.dj.ckw.authservice.exception.UserAlreadyExistsException;
@@ -10,25 +11,38 @@ import com.dj.ckw.authservice.grpc.UserIdentityConfirmationServiceGrpc;
 import com.dj.ckw.authservice.model.User;
 import com.dj.ckw.authservice.repository.UserRepository;
 import com.dj.ckw.authservice.util.JwtUtil;
+
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.JsonNodeException;
+import tools.jackson.databind.node.ObjectNode;
+
 import com.dj.ckw.authservice.config.NoOpUserIdentityStub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.Optional;
 
 @Service
 public class AuthService {
+  private static final int OTP_LENGTH = 6;
+  private static final Duration OTP_TTL = Duration.ofMinutes(15);
+
   private final UserService userService;
   private final PasswordEncoder passwordEncoder;
   private final JwtUtil jwtUtil;
   private final UserRepository userRepository;
   private final UserIdentityConfirmationServiceGrpc.UserIdentityConfirmationServiceBlockingV2Stub userIdentityConfirmationServiceStub;
   private final NoOpUserIdentityStub fallbackStub;
+  private final @Nullable StringRedisTemplate redisTemplate;
+  private final @Nullable ObjectMapper objectMapper;
   private final Logger log = LoggerFactory.getLogger(AuthService.class);
 
   public AuthService(
@@ -36,13 +50,17 @@ public class AuthService {
       PasswordEncoder passwordEncoder,
       JwtUtil jwtUtil,
       UserRepository userRepository,
-      UserIdentityConfirmationServiceGrpc.@Nullable UserIdentityConfirmationServiceBlockingV2Stub stub) {
+      UserIdentityConfirmationServiceGrpc.@Nullable UserIdentityConfirmationServiceBlockingV2Stub stub,
+      @Nullable StringRedisTemplate redisTemplate,
+      @Nullable ObjectMapper objectMapper) {
     this.userService = userService;
     this.passwordEncoder = passwordEncoder;
     this.jwtUtil = jwtUtil;
     this.userRepository = userRepository;
     this.userIdentityConfirmationServiceStub = stub;
     this.fallbackStub = new NoOpUserIdentityStub();
+    this.redisTemplate = redisTemplate;
+    this.objectMapper = objectMapper;
   }
 
   public Optional<String> authenticate(AuthRequestDto authRequestDto) {
@@ -73,7 +91,6 @@ public class AuthService {
     }
 
     try {
-      // Confirm user identity using real stub if available, otherwise use fallback
       UserIdentityConfirmationResponse response = confirmUserIdentity(authRequestDto.getEmail());
 
       if (response.getIsConfirmed()) {
@@ -97,6 +114,107 @@ public class AuthService {
   }
 
   /**
+   * Initiates a password reset request using Redis Pub/Sub.
+   *
+   * <p>
+   * A secure 6-digit OTP is generated and its BCrypt hash is stored in Redis
+   * with a 15-minute TTL under the key {@code password_reset:{email}}.
+   * The raw OTP is published along with the email on the {@code user-events}
+   * topic
+   * so the user-service can send it via email.
+   *
+   * <p>
+   * Always returns without error regardless of whether the email exists,
+   * to prevent user enumeration.
+   */
+  public void initiatePasswordReset(String email) {
+    log.info("Initiating password reset for: {}", email);
+
+    if (redisTemplate == null || objectMapper == null) {
+      log.warn("Redis not available — password reset initiation skipped for: {}", email);
+      return;
+    }
+
+    String otp = generateOtp();
+    String hashedOtp = passwordEncoder.encode(otp);
+    String redisKey = RedisPubSubConfig.PASSWORD_RESET_KEY_PREFIX + email;
+
+    redisTemplate.opsForValue().set(redisKey, hashedOtp, OTP_TTL);
+    log.debug("Stored password reset OTP hash in Redis for: {}", email);
+
+    publishEvent("PASSWORD_RESET_REQUESTED", objectMapper.createObjectNode()
+        .put("email", email)
+        .put("otp", otp));
+  }
+
+  /**
+   * Completes the password reset flow.
+   *
+   * <p>
+   * Retrieves the hashed OTP from Redis, verifies the supplied code,
+   * then updates the password in the local users table and removes the Redis key.
+   * If the code is wrong, expired, or the key doesn't exist, the method returns
+   * silently — callers always receive 200 to prevent oracle attacks.
+   */
+  public void resetPassword(ResetPasswordRequestDto dto) {
+    log.info("Attempting password reset for: {}", dto.getEmail());
+
+    if (redisTemplate == null) {
+      log.warn("Redis not available — password reset skipped for: {}", dto.getEmail());
+      return;
+    }
+
+    String redisKey = RedisPubSubConfig.PASSWORD_RESET_KEY_PREFIX + dto.getEmail();
+    String storedHash = redisTemplate.opsForValue().get(redisKey);
+
+    if (storedHash == null) {
+      log.warn("No active reset session found in Redis for: {} (expired or never initiated)", dto.getEmail());
+      return;
+    }
+
+    if (!passwordEncoder.matches(dto.getCode(), storedHash)) {
+      log.warn("Invalid reset code supplied for: {}", dto.getEmail());
+      return;
+    }
+
+    Optional<User> userOptional = userRepository.findByEmail(dto.getEmail());
+    if (userOptional.isEmpty()) {
+      log.warn("User not found in auth DB during reset for: {}", dto.getEmail());
+      redisTemplate.delete(redisKey);
+      return;
+    }
+
+    User user = userOptional.get();
+    user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+    userRepository.save(user);
+
+    redisTemplate.delete(redisKey);
+    log.info("Password reset successfully for: {}", dto.getEmail());
+  }
+
+  private void publishEvent(String eventType, ObjectNode payload) {
+    if (redisTemplate == null || objectMapper == null) {
+      log.warn("Redis not available — event {} not published", eventType);
+      return;
+    }
+    try {
+      ObjectNode event = objectMapper.createObjectNode();
+      event.put("eventType", eventType);
+      event.set("payload", payload);
+      String json = objectMapper.writeValueAsString(event);
+      redisTemplate.convertAndSend(RedisPubSubConfig.USER_EVENTS_TOPIC, json);
+      log.info("Published event: {} to Redis topic: {}", eventType, RedisPubSubConfig.USER_EVENTS_TOPIC);
+    } catch (JsonNodeException e) {
+      log.error("Failed to serialize event: {}", eventType, e);
+    }
+  }
+
+  private String generateOtp() {
+    return String.format("%0" + OTP_LENGTH + "d",
+        new SecureRandom().nextInt((int) Math.pow(10, OTP_LENGTH)));
+  }
+
+  /**
    * Confirms user identity using real gRPC stub if available,
    * otherwise falls back to no-op implementation for degraded mode.
    */
@@ -110,27 +228,13 @@ public class AuthService {
             UserIdentityConfirmationRequest.newBuilder().setEmail(email).build());
       }
     } catch (Exception e) {
-      // If gRPC call fails, use fallback
       log.warn("gRPC call failed, using fallback response: {}", e.getMessage());
       return fallbackStub.confirmUserIdentity(
           UserIdentityConfirmationRequest.newBuilder().setEmail(email).build());
     }
   }
 
-  public void initiatePasswordReset(String email) {
-    log.info("Initiating password reset for user: {}", email);
-    // Implementation to be added later (will call User Service via gRPC)
-  }
-
-  public void resetPassword(ResetPasswordRequestDto resetPasswordRequestDto) {
-    log.info("Attempting to reset password for user: {}", resetPasswordRequestDto.getEmail());
-    // Implementation:
-    // 1. Call User Service via gRPC to verify the code
-    // 2. If successful, hash newPassword and update in local DB
-  }
-
   @CacheEvict(value = "users", key = "#token")
   public void logout(String token) {
-
   }
 }

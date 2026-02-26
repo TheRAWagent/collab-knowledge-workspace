@@ -17,8 +17,8 @@ public class EmailServiceImpl implements EmailService {
   private final SesV2Client sesV2Client;
   private final String fromEmail;
 
-  public EmailServiceImpl(@Value("${SES_FROM_EMAIL:}") String fromEmail, SesV2Client sesV2Client) {
-    this.sesV2Client = sesV2Client;
+  public EmailServiceImpl(@Value("${SES_FROM_EMAIL:}") String fromEmail) {
+    this.sesV2Client = SesV2Client.builder().build();
     this.fromEmail = fromEmail;
   }
 
@@ -65,5 +65,42 @@ public class EmailServiceImpl implements EmailService {
         + "using the AWS SDK for Java...");
     sesV2Client.sendEmail(emailRequest);
     log.info("email was sent");
+  }
+
+  @Override
+  public void sendPasswordResetOtpEmail(String toEmail, String otp) {
+
+    Destination destination = Destination.builder().toAddresses(toEmail).build();
+
+    Content subject = Content.builder()
+        .data("Password Reset OTP")
+        .build();
+
+    Content bodyContent = Content.builder()
+        .data("""
+            <html>
+                <body>
+                    <h1>Your OTP for Password Reset</h1>
+                    <p>Your OTP is: <strong>%s</strong></p>
+                    <p>This OTP is valid for 15 minutes. Do not share it with anyone.</p>
+                    <p>If you did not request a password reset, please ignore this email.</p>
+                </body>
+            </html>
+            """.formatted(otp))
+        .build();
+
+    Body body = Body.builder().html(bodyContent).build();
+    Message msg = Message.builder().subject(subject).body(body).build();
+    EmailContent emailContent = EmailContent.builder().simple(msg).build();
+
+    SendEmailRequest emailRequest = SendEmailRequest.builder()
+        .destination(destination)
+        .content(emailContent)
+        .fromEmailAddress(fromEmail)
+        .build();
+
+    log.info("Sending password reset OTP email to: {}", toEmail);
+    sesV2Client.sendEmail(emailRequest);
+    log.info("Password reset OTP email sent to: {}", toEmail);
   }
 }

@@ -2,6 +2,8 @@ package com.dj.ckw.authservice.controller;
 
 import com.dj.ckw.authservice.dto.IntrospectionResponse;
 import com.dj.ckw.authservice.dto.AuthRequestDto;
+import com.dj.ckw.authservice.dto.ForgotPasswordInitDto;
+import com.dj.ckw.authservice.dto.ResetPasswordRequestDto;
 import com.dj.ckw.authservice.dto.validators.CreateUserValidationGroup;
 import com.dj.ckw.authservice.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,14 +69,28 @@ public class AuthController {
     return ResponseEntity.ok(new IntrospectionResponse(encodedContext));
   }
 
+  @Operation(summary = "Initiate password reset")
+  @PostMapping("/forgot-password/initiate")
+  public ResponseEntity<Void> initiatePasswordReset(
+      @RequestBody @Validated ForgotPasswordInitDto forgotPasswordInitDto) {
+    authService.initiatePasswordReset(forgotPasswordInitDto.getEmail());
+    return ResponseEntity.ok().build();
+  }
+
+  @Operation(summary = "Reset password using code")
+  @PostMapping("/forgot-password/reset")
+  public ResponseEntity<Void> resetPassword(@RequestBody @Validated ResetPasswordRequestDto resetPasswordRequestDto) {
+    authService.resetPassword(resetPasswordRequestDto);
+    return ResponseEntity.ok().build();
+  }
+
   @Operation(summary = "Logout", description = "Invalidates the session or token and logs the user out")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Logged out successfully"),
       @ApiResponse(responseCode = "401", description = "Unauthorized")
   })
   @PostMapping("/logout")
-  public void logout() {
-    // Intentionally left blank
-    // Spring Security will handle the logout by clearing the cookie
+  public void logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    authService.logout(authHeader);
   }
 }

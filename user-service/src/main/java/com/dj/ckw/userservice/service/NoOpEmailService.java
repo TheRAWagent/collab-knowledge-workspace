@@ -10,6 +10,11 @@ public class NoOpEmailService implements EmailService {
 
   @Override
   public void sendAccountVerificationOtpEmail(String toEmail, String otp) {
-    logger.info("No-op email service: {}", toEmail);
+    logger.info("No-op email service (account verification): {}", toEmail);
+  }
+
+  @Override
+  public void sendPasswordResetOtpEmail(String toEmail, String otp) {
+    logger.info("No-op email service (password reset): {}", toEmail);
   }
 }

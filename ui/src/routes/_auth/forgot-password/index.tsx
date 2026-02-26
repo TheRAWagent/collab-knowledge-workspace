@@ -1,3 +1,4 @@
+import ForgotPasswordCard from "@/modules/auth/components/forgot-password-card";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth/forgot-password/")({
@@ -5,5 +6,5 @@ export const Route = createFileRoute("/_auth/forgot-password/")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/_auth/forgot-password/"!</div>;
+  return <ForgotPasswordCard />;
 }

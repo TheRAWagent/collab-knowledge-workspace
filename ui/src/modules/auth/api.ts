@@ -40,6 +40,20 @@ export interface AuthRequestDto {
   password: string;
 }
 
+export interface ResetPasswordRequestDto {
+  /** @minLength 1 */
+  email: string;
+  /** @minLength 1 */
+  code: string;
+  /** @minLength 1 */
+  newPassword: string;
+}
+
+export interface ForgotPasswordInitDto {
+  /** @minLength 1 */
+  email: string;
+}
+
 export interface IntrospectionResponse {
   userContext?: string;
 }
@@ -226,6 +240,130 @@ export const useLogin = <TError = AxiosError<unknown>,
       > => {
 
       const mutationOptions = getLoginMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Reset password using code
+ */
+export const resetPassword = (
+    resetPasswordRequestDto: ResetPasswordRequestDto, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.post(
+      `/auth/forgot-password/reset`,
+      resetPasswordRequestDto,options
+    );
+  }
+
+
+
+export const getResetPasswordMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resetPassword>>, TError,{data: ResetPasswordRequestDto}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof resetPassword>>, TError,{data: ResetPasswordRequestDto}, TContext> => {
+
+const mutationKey = ['resetPassword'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resetPassword>>, {data: ResetPasswordRequestDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  resetPassword(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ResetPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof resetPassword>>>
+    export type ResetPasswordMutationBody = ResetPasswordRequestDto
+    export type ResetPasswordMutationError = AxiosError<unknown>
+
+    /**
+ * @summary Reset password using code
+ */
+export const useResetPassword = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resetPassword>>, TError,{data: ResetPasswordRequestDto}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof resetPassword>>,
+        TError,
+        {data: ResetPasswordRequestDto},
+        TContext
+      > => {
+
+      const mutationOptions = getResetPasswordMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * @summary Initiate password reset
+ */
+export const initiatePasswordReset = (
+    forgotPasswordInitDto: ForgotPasswordInitDto, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.default.post(
+      `/auth/forgot-password/initiate`,
+      forgotPasswordInitDto,options
+    );
+  }
+
+
+
+export const getInitiatePasswordResetMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof initiatePasswordReset>>, TError,{data: ForgotPasswordInitDto}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof initiatePasswordReset>>, TError,{data: ForgotPasswordInitDto}, TContext> => {
+
+const mutationKey = ['initiatePasswordReset'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof initiatePasswordReset>>, {data: ForgotPasswordInitDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  initiatePasswordReset(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type InitiatePasswordResetMutationResult = NonNullable<Awaited<ReturnType<typeof initiatePasswordReset>>>
+    export type InitiatePasswordResetMutationBody = ForgotPasswordInitDto
+    export type InitiatePasswordResetMutationError = AxiosError<unknown>
+
+    /**
+ * @summary Initiate password reset
+ */
+export const useInitiatePasswordReset = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof initiatePasswordReset>>, TError,{data: ForgotPasswordInitDto}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof initiatePasswordReset>>,
+        TError,
+        {data: ForgotPasswordInitDto},
+        TContext
+      > => {
+
+      const mutationOptions = getInitiatePasswordResetMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }

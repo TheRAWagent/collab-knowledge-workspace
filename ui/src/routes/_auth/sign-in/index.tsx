@@ -1,4 +1,4 @@
-import AuthenticationCard from '@/modules/auth/components/sign-in-card'
+import SignInCard from '@/modules/auth/components/sign-in-card'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_auth/sign-in/')({
@@ -6,5 +6,5 @@ export const Route = createFileRoute('/_auth/sign-in/')({
 })
 
 function RouteComponent() {
-  return <AuthenticationCard />
+  return <SignInCard />
 }
