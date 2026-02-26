@@ -5,12 +5,15 @@ interface CreatePageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   workspaceId: string;
+  /** Called after successful creation */
+  onCreated?: () => void;
 }
 
 export function CreatePageDialog({
   open,
   onOpenChange,
   workspaceId,
+  onCreated,
 }: CreatePageDialogProps) {
   return (
     <ResponsiveDialog
@@ -21,7 +24,10 @@ export function CreatePageDialog({
     >
       <PageForm
         workspaceId={workspaceId}
-        onSuccess={() => onOpenChange(false)}
+        onSuccess={() => {
+          onCreated?.();
+          onOpenChange(false);
+        }}
         onCancel={() => onOpenChange(false)}
       />
     </ResponsiveDialog>

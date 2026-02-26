@@ -56,7 +56,7 @@ public class AuthController {
     return ResponseEntity.ok().build();
   }
 
-  @Operation(summary = "Validate Token")
+  @Operation(summary = "Validate Token", hidden = true)
   @GetMapping("/validate")
   public ResponseEntity<IntrospectionResponse> validateToken(
       @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {

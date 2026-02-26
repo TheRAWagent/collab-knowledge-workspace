@@ -18,34 +18,47 @@ import java.util.UUID;
 @RequestMapping("/{workspaceId}/documents")
 public class DocumentController {
 
-    private final DocumentService documentService;
+  private final DocumentService documentService;
 
-    public DocumentController(DocumentService documentService) {
-        this.documentService = documentService;
-    }
+  public DocumentController(DocumentService documentService) {
+    this.documentService = documentService;
+  }
 
-    @PostMapping
-    public Mono<ResponseEntity<DocumentResponse>> createPage(@RequestBody @Validated({Default.class, CreateDocumentValidationGroup.class}) DocumentRequest req, @PathVariable UUID workspaceId) {
-        return documentService.createPage(req, workspaceId).map(page -> ResponseEntity.created(URI.create("/pages/" + page.getId())).body(page));
-    }
+  @PostMapping(produces = "application/json")
+  public Mono<ResponseEntity<DocumentResponse>> createPage(
+      @RequestBody @Validated({ Default.class, CreateDocumentValidationGroup.class }) DocumentRequest req,
+      @PathVariable UUID workspaceId) {
+    return documentService.createPage(req, workspaceId)
+        .map(page -> ResponseEntity.created(URI.create("/pages/" + page.getId())).body(page));
+  }
 
-    @GetMapping("/{pageId}")
-    public Mono<DocumentResponse> getPage(@PathVariable UUID pageId, @PathVariable UUID workspaceId) {
-        return documentService.getPage(pageId, workspaceId);
-    }
+  @GetMapping(path = "/{pageId}", produces = "application/json")
+  public Mono<DocumentResponse> getPage(@PathVariable UUID pageId, @PathVariable UUID workspaceId) {
+    return documentService.getPage(pageId, workspaceId);
+  }
 
-    @GetMapping
-    public Flux<DocumentResponse> getPages(@PathVariable UUID workspaceId) {
-        return documentService.listPages(workspaceId);
-    }
+  @GetMapping(produces = "application/json")
+  public Flux<DocumentResponse> getPages(@PathVariable UUID workspaceId) {
+    return documentService.listPages(workspaceId);
+  }
 
-    @PatchMapping("/{pageId}")
-    public Mono<DocumentResponse> updatePage(@PathVariable UUID pageId, @RequestBody @Validated({Default.class, UpdateDocumentValidationGroup.class}) DocumentRequest req, @PathVariable UUID workspaceId) {
-        return documentService.updatePage(pageId, req, workspaceId);
-    }
+  @PatchMapping(path = "/{pageId}", produces = "application/json")
+  public Mono<DocumentResponse> updatePage(@PathVariable UUID pageId,
+      @RequestBody @Validated({ Default.class, UpdateDocumentValidationGroup.class }) DocumentRequest req,
+      @PathVariable UUID workspaceId) {
+    return documentService.updatePage(pageId, req, workspaceId);
+  }
 
-    @DeleteMapping("/{pageId}")
-    public Mono<Void> deletePage(@PathVariable UUID pageId, @PathVariable UUID workspaceId) {
-        return documentService.deletePage(pageId, workspaceId);
-    }
+  @DeleteMapping(path = "/{pageId}")
+  public Mono<Void> deletePage(@PathVariable UUID pageId, @PathVariable UUID workspaceId) {
+    return documentService.deletePage(pageId, workspaceId);
+  }
+
+  @PatchMapping(path = "/{pageId}/move", produces = "application/json")
+  public Mono<DocumentResponse> movePage(
+      @PathVariable UUID pageId,
+      @PathVariable UUID workspaceId,
+      @RequestBody MovePageRequest request) {
+    return documentService.movePage(pageId, workspaceId, request);
+  }
 }

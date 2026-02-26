@@ -26,7 +26,7 @@ public class SnapshotController {
         return snapshotService.persist(documentId, req);
     }
 
-    @GetMapping("/{documentId}/snapshot")
+    @GetMapping(path = "/{documentId}/snapshot", produces = "application/json")
     public Mono<SnapshotResponse> getSnapshot(
             @PathVariable UUID documentId
     ) {

@@ -37,7 +37,7 @@ function RouteComponent() {
     return null;
   }
 
-  if(userData?.data.name === null){
+  if(userData?.name === null){
     router.navigate({to: '/onboarding'})
   }
 

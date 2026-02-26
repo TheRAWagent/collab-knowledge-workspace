@@ -4,15 +4,15 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 export const Route = createFileRoute("/_auth")({
   component: RouteComponent,
   beforeLoad: async () => {
-    try{
+    try {
 
       const userResponse = await getUser();
-      if (userResponse.status === 200) {
+      if (userResponse) {
         return {
           redirect: "/",
         };
       }
-    }catch(e){
+    } catch (e) {
       console.log(e);
     }
   }
@@ -33,8 +33,8 @@ function RouteComponent() {
       <div className="absolute inset-0 bg-black/20" />
 
       <div className="flex-1 flex items-center justify-center">
-          <Outlet />
-        </div>
+        <Outlet />
+      </div>
     </div>
   );
 }

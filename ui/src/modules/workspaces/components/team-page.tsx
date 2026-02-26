@@ -17,14 +17,14 @@ export function TeamPage({ workspaceId }: { workspaceId: string }) {
     );
   }
 
-  if (!workspace?.data) {
+  if (!workspace) {
     return (
       <div className="flex items-center justify-center h-full">
         <p className="text-muted-foreground">Workspace not found</p>
       </div>
     );
   }
-  const members = membersData?.data?.members || [];
+  const members = membersData?.members || [];
 
   return (
     <div className="flex flex-col h-full">
@@ -37,7 +37,7 @@ export function TeamPage({ workspaceId }: { workspaceId: string }) {
                 Team Members
               </h1>
               <p className="text-muted-foreground mt-1">
-                Manage members and permissions for {workspace.data.name}
+                Manage members and permissions for {workspace.name}
               </p>
             </div>
           </div>

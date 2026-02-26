@@ -18,7 +18,13 @@ export default defineConfig({
       client: "react-query",
       target: "./src/modules/auth/api.ts",
       baseUrl: '/auth',
-      httpClient: "axios",  
+      httpClient: "axios",
+      override: {
+        mutator: {
+          path: "./src/lib/axios.ts",
+          name: "customInstance",
+        }
+      }  
     },
   },
 
@@ -37,7 +43,13 @@ export default defineConfig({
       client: "react-query",
       target: "./src/modules/workspaces/api.ts",
       baseUrl: '/workspaces',
-      httpClient: "axios",  
+      httpClient: "axios",
+      override: {
+        mutator: {
+          path: "./src/lib/axios.ts",
+          name: "customInstance",
+        }
+      }  
     },
   },
 
@@ -56,7 +68,13 @@ export default defineConfig({
       client: "react-query",
       target: "./src/modules/pages/api.ts",
       baseUrl: '/workspace',
-      httpClient: "axios",  
+      httpClient: "axios",
+      override: {
+        mutator: {
+          path: "./src/lib/axios.ts",
+          name: "customInstance",
+        }
+      }  
     },
   },
 
@@ -75,7 +93,13 @@ export default defineConfig({
       client: "react-query",
       target: "./src/modules/users/api.ts",
       baseUrl: '/user',
-      httpClient: "axios",  
+      httpClient: "axios",
+      override: {
+        mutator: {
+          path: "./src/lib/axios.ts",
+          name: "customInstance",
+        }
+      }  
     },
   },
 });

@@ -62,11 +62,11 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
         <div className="border-b border-sidebar-border px-6 py-6">
           <div className={cn("flex items-center gap-3", collapsed && "justify-center")}>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-bold shrink-0">
-              {userResponse?.data.name?.charAt(0)}
+              {userResponse?.name?.charAt(0)}
             </div>
             {!collapsed && (
               <div>
-                <h1 className="text-lg font-semibold">{userResponse?.data.name}</h1>
+                <h1 className="text-lg font-semibold">{userResponse?.name}</h1>
               </div>
             )}
           </div>
@@ -81,7 +81,7 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
           )}
 
           <div className="space-y-2">
-            {workspaceResponse?.data.content?.map((workspace) => (
+            {workspaceResponse?.content?.map((workspace) => (
               <div key={workspace.id}>
                 <button
                   onClick={() => setExpandedWorkspace(expandedWorkspace === workspace.id ? null : workspace.id)}
@@ -185,7 +185,7 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
           <div className={cn("flex items-center", collapsed ? "justify-center" : "justify-between pt-2")}>
             {!collapsed && (
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground text-xs font-semibold">
-                {userResponse?.data.name?.charAt(0)}
+                {userResponse?.name?.charAt(0)}
               </div>
             )}
             <button

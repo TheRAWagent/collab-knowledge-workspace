@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { loginBody } from "../schemas";
+import { LoginBody } from "../schemas";
 import z from "zod";
 import {
   Form,
@@ -19,8 +19,8 @@ import { toast } from "sonner";
 export default function SignInCard() {
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof loginBody>>({
-    resolver: zodResolver(loginBody),
+  const form = useForm<z.infer<typeof LoginBody>>({
+    resolver: zodResolver(LoginBody),
     defaultValues: {
       email: "",
       password: "",
@@ -43,7 +43,7 @@ export default function SignInCard() {
     }
   });
 
-  const handleSubmit = (values: z.infer<typeof loginBody>) => {
+  const handleSubmit = (values: z.infer<typeof LoginBody>) => {
     createUserMutation.mutate({ data: values });
   };
 

@@ -23,7 +23,7 @@ public class WorkspaceController {
     }
 
     @Operation(summary = "Create a new workspace")
-    @PostMapping
+    @PostMapping(produces = "application/json")
     public ResponseEntity<WorkspaceResponse> create(@Valid @RequestBody CreateWorkspaceRequest req) {
         String owner = requestInfo.getEmail();
         WorkspaceResponse created = service.create(req, owner);
@@ -31,14 +31,14 @@ public class WorkspaceController {
     }
 
     @Operation(summary = "Get workspace by ID")
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<WorkspaceResponse> getById(@PathVariable UUID id) {
         String requester = requestInfo.getEmail();
         return ResponseEntity.ok().body(service.getById(id, requester));
     }
 
     @Operation(summary = "List workspaces with pagination and optional search")
-    @GetMapping
+    @GetMapping(produces = "application/json")
     public ResponseEntity<PagedResponse<WorkspaceResponse>> list(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "size", required = false, defaultValue = "20") int size,
@@ -49,7 +49,7 @@ public class WorkspaceController {
     }
 
     @Operation(summary = "Update an existing workspace")
-    @PutMapping("/{id}")
+    @PutMapping(path ="/{id}", produces = "application/json")
     public ResponseEntity<WorkspaceResponse> update(@PathVariable UUID id, @Valid @RequestBody UpdateWorkspaceRequest req) {
         String requester = requestInfo.getEmail();
         return ResponseEntity.ok().body(service.update(id, req, requester));
@@ -63,7 +63,7 @@ public class WorkspaceController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/members")
+    @GetMapping(path = "/{id}/members", produces = "application/json")
     public ResponseEntity<WorkspaceMembersResponseDto> getMembers(@PathVariable UUID id) {
         return ResponseEntity.ok().body(service.getWorkspaceMembers(id, requestInfo.getEmail()));
     }

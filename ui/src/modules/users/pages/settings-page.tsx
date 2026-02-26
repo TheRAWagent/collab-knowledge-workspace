@@ -39,9 +39,9 @@ function ProfileForm() {
   });
 
   useEffect(() => {
-    if (userResponse?.data) {
+    if (userResponse) {
       form.reset({
-        name: userResponse.data.name || "",
+        name: userResponse.name || "",
       });
     }
   }, [userResponse, form]);
@@ -86,7 +86,7 @@ function ProfileForm() {
         {/* Email - Read Only */}
         <div className="space-y-2">
           <FormLabel>Email</FormLabel>
-          <Input disabled value={userResponse?.data?.email || ""} />
+          <Input disabled value={userResponse?.email || ""} />
           <FormDescription>
             Email address cannot be changed currently.
           </FormDescription>

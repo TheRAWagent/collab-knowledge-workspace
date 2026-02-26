@@ -2,6 +2,7 @@ package com.dj.ckw.pageservice.service.impl;
 
 import com.dj.ckw.pageservice.dto.DocumentRequest;
 import com.dj.ckw.pageservice.dto.DocumentResponse;
+import com.dj.ckw.pageservice.dto.MovePageRequest;
 import com.dj.ckw.pageservice.exception.DocumentNotFoundException;
 import com.dj.ckw.pageservice.model.DocumentEntity;
 import com.dj.ckw.pageservice.repository.DocumentRepository;
@@ -70,5 +71,20 @@ public class DocumentServiceImpl implements DocumentService {
     return this.getPage(pageId, workspaceId).flatMap(
         existing -> documentRepository.deleteById(existing.getId()))
         .doOnSuccess(v -> log.info("Page deleted: {}", pageId));
+  }
+
+  public Mono<DocumentResponse> movePage(UUID pageId, UUID workspaceId, MovePageRequest request) {
+    log.info("Moving page '{}' to directory '{}'", pageId, request.getDirectoryId());
+    return documentRepository.findById(pageId)
+        .filter(document -> document.getWorkspaceId().equals(workspaceId))
+        .switchIfEmpty(Mono.error(new DocumentNotFoundException(pageId)))
+        .flatMap(existing -> {
+          existing.setDirectoryId(request.getDirectoryId());
+          if (request.getSortOrder() != null) {
+            existing.setSortOrder(request.getSortOrder());
+          }
+          return documentRepository.save(existing).map(DocumentResponse::create);
+        })
+        .doOnSuccess(doc -> log.info("Page moved: {}", doc.getId()));
   }
 }

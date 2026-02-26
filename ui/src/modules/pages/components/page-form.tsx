@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { createPageBody } from "../schemas";
+import { CreatePageBody } from "../schemas";
 import { useCreatePage, useUpdatePage, type DocumentResponse, getGetPagesQueryOptions } from "../api";
 import {
   Form,
@@ -60,8 +60,8 @@ export function PageForm({
 
   const isLoading = isCreatePending || isUpdatePending;
 
-  const form = useForm<z.infer<typeof createPageBody>>({
-    resolver: zodResolver(createPageBody),
+  const form = useForm<z.infer<typeof CreatePageBody>>({
+    resolver: zodResolver(CreatePageBody),
     defaultValues: {
       title: "",
       icon: "",
@@ -77,7 +77,7 @@ export function PageForm({
     }
   }, [initialValues, form]);
 
-  function onSubmit(values: z.infer<typeof createPageBody>) {
+  function onSubmit(values: z.infer<typeof CreatePageBody>) {
     if (isEdit && initialValues?.id) {
       updatePage({ workspaceId, pageId: initialValues.id, data: values });
     } else {

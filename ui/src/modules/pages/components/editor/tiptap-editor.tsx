@@ -161,7 +161,7 @@ export function TiptapEditor({
       }),
       CollaborationCaret.configure({
         provider: provider,
-        user: { name: data?.data.name, color: Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0') }
+        user: { name: data?.name, color: Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0') }
       }),
       CodeBlockLowlight.configure({
         lowlight

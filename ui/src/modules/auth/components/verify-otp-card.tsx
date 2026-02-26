@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query"
 import { verifyEmail, useResendVerification } from "@/modules/users/api"
 import { toast } from "sonner"
 import { useForm } from "react-hook-form"
-import { verifyEmailBody } from "@/modules/users/schemas"
+import { VerifyEmailBody } from "@/modules/users/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type z from "zod"
 import { Form, FormField } from "@/components/ui/form"
@@ -38,15 +38,15 @@ export default function VerifyOtpCard({ email }: { email: string }) {
     }
   });
 
-  const form = useForm<z.infer<typeof verifyEmailBody>>({
-    resolver: zodResolver(verifyEmailBody),
+  const form = useForm<z.infer<typeof VerifyEmailBody>>({
+    resolver: zodResolver(VerifyEmailBody),
     defaultValues: {
       email,
       code: ""
     },
   })
 
-  const handleSubmit = async (data: z.infer<typeof verifyEmailBody>) => {
+  const handleSubmit = async (data: z.infer<typeof VerifyEmailBody>) => {
     verifyUserMutation.mutate(data.code)
   }
 

@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { createUserBody } from "../schemas";
+import { CreateUserBody } from "../schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -19,7 +19,7 @@ import { createUser } from "@/modules/users/api";
 
 export default function SignUpCard() {
   const router = useRouter();
-  const signUpSchema = createUserBody.omit({ password: true });
+  const signUpSchema = CreateUserBody.omit({ password: true });
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { createBody } from "../schemas";
+import { CreateBody } from "../schemas";
 import { getGetByIdQueryOptions, getListQueryOptions, useCreate, useUpdate, type WorkspaceResponse } from "../api";
 import {
   Form,
@@ -58,8 +58,8 @@ export function WorkspaceForm({
 
   const isLoading = isCreatePending || isUpdatePending;
 
-  const form = useForm<z.infer<typeof createBody>>({
-    resolver: zodResolver(createBody),
+  const form = useForm<z.infer<typeof CreateBody>>({
+    resolver: zodResolver(CreateBody),
     defaultValues: {
       name: "",
       description: "",
@@ -75,7 +75,7 @@ export function WorkspaceForm({
     }
   }, [initialValues, form]);
 
-  function onSubmit(values: z.infer<typeof createBody>) {
+  function onSubmit(values: z.infer<typeof CreateBody>) {
     if (isEdit && initialValues) {
       updateWorkspace({ id: initialValues.id, data: values });
     } else {

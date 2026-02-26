@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { updateUserBody } from "../schemas";
+import { UpdateUserBody } from "../schemas";
 import { updateUser } from "../api";
 import {
   Form,
@@ -20,7 +20,7 @@ import { useMutation } from "@tanstack/react-query";
 export default function OnboardingCard() {
   const router = useRouter();
   const { mutate: createUser, isPending } = useMutation({
-    mutationFn: async (data: z.infer<typeof updateUserBody>) => {
+    mutationFn: async (data: z.infer<typeof UpdateUserBody>) => {
       return await updateUser(data);
     },
       onSuccess: () => {
@@ -32,14 +32,14 @@ export default function OnboardingCard() {
       },
     });
 
-  const form = useForm<z.infer<typeof updateUserBody>>({
-    resolver: zodResolver(updateUserBody),
+  const form = useForm<z.infer<typeof UpdateUserBody>>({
+    resolver: zodResolver(UpdateUserBody),
     defaultValues: {
       name: "",
       },
   });
 
-  function onSubmit(values: z.infer<typeof updateUserBody>) {
+  function onSubmit(values: z.infer<typeof UpdateUserBody>) {
     createUser(values);
   }
 
