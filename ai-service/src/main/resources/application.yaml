@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: ai-service
+  threads:
+    virtual:
+      enabled: true

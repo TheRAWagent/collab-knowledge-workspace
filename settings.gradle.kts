@@ -12,6 +12,7 @@ include("user-service")
 include("page-service")
 include("workspace-service")
 include("admin")
+include("ai-service")
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
