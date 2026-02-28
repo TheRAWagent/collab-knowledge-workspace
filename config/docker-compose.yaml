@@ -127,6 +127,22 @@ services:
         limits:
           memory: 768M
 
+  ai-service:
+    image: 192.168.29.125/${ENVIRONMENT}/ai-service:${VERSION}
+    networks:
+      - internal
+    env_file:
+      - ./.env.ai-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    mem_limit: 512M
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
   api-gateway:
     image: 192.168.29.125/${ENVIRONMENT}/api-gateway:${VERSION}
     networks:

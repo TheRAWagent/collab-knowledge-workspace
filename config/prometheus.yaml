@@ -31,6 +31,11 @@ scrape_configs:
     static_configs:
       - targets: ['page-service:8080'] # Assuming 8080
 
+  - job_name: 'ai-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['ai-service:8080'] # Assuming 8080
+
   - job_name: 'collaboration-service'
     metrics_path: '/metrics'
     static_configs:

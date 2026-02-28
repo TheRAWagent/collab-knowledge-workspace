@@ -33,6 +33,10 @@ spring:
               - uri: http://page-service:8080
                 metadata:
                   "[management.context-path]": /actuator
+            ai-service:
+              - uri: http://ai-service:8080
+                metadata:
+                  "[management.context-path]": /actuator
 
 management:
   endpoints:

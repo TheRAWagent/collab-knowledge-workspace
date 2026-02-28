@@ -4,3 +4,27 @@ spring:
   threads:
     virtual:
       enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+  tracing:
+    sampling:
+      probability: 1.0   
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
+          transport: grpc
+  otlp:
+    metrics:
+      export:
+        enabled: false
