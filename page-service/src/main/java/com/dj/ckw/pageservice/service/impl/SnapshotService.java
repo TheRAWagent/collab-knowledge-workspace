@@ -2,6 +2,7 @@ package com.dj.ckw.pageservice.service.impl;
 
 import com.dj.ckw.pageservice.dto.BlockSnapshotRequest;
 import com.dj.ckw.pageservice.dto.SnapshotResponse;
+import com.dj.ckw.pageservice.exception.SnapshotNotFoundException;
 import com.dj.ckw.pageservice.model.SnapshotEntity;
 import com.dj.ckw.pageservice.repository.SnapshotRepository;
 import tools.jackson.databind.exc.JsonNodeException;
@@ -84,7 +85,7 @@ public class SnapshotService {
   public Mono<SnapshotResponse> getSnapshot(UUID documentId) {
     return snapshotRepository.findByDocumentId(documentId)
         .switchIfEmpty(Mono.error(
-            new IllegalArgumentException("Snapshot not found for documentId: " + documentId)))
+            new SnapshotNotFoundException("Snapshot not found for documentId: " + documentId)))
         .map(snap -> new SnapshotResponse(
             snap.getVersion(),
             snap.getSchemaVersion(),

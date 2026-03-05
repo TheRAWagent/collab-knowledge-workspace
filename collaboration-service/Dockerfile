@@ -23,7 +23,6 @@ COPY . .
 # [Optional] Tests & build
 ENV NODE_ENV=production
 # RUN bun test
-RUN bun orval
 RUN bun run build
 
 # === Release stage ===

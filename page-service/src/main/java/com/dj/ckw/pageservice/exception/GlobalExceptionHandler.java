@@ -46,6 +46,7 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(SnapshotNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   public ResponseEntity<Map<String, String>> handleSnapshotNotFoundException(SnapshotNotFoundException ex) {
     log.warn("Snapshot not found: {}", ex.getMessage());
     return ResponseEntity.status(404).body(Map.of("error", ex.getMessage()));
