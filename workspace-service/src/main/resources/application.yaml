@@ -1,12 +1,17 @@
 spring:
+  main:
+    lazy-initialization: true
   application:
     name: workspace-service
+  jpa:
+    open-in-view: false
   datasource:
     hikari:
       maximum-pool-size: 5
       minimum-idle: 1
       idle-timeout: 30000
       max-lifetime: 600000
+      keepalive-time: 30000
   threads:
     virtual:
       enabled: true
@@ -22,7 +27,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include:
+          - health
+          - info
+          - prometheus
   metrics:
     tags:
       application: ${spring.application.name}

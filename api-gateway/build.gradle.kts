@@ -19,16 +19,14 @@ java {
 
 dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux")
-    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
-    implementation("io.grpc:grpc-services")
+    implementation("org.springframework.grpc:spring-grpc-client-spring-boot-starter")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("io.projectreactor:reactor-test")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webclient")
     testImplementation("org.springframework.boot:spring-boot-starter-webclient-test")
-    implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
+    // implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     implementation("ch.qos.logback:logback-classic")
     implementation(libs.logstash.logback.encoder)
     implementation("io.micrometer:micrometer-registry-prometheus")

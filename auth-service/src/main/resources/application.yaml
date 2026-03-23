@@ -1,4 +1,6 @@
 spring:
+  main:
+    lazy-initialization: true
   application:
     name: auth-service
   datasource:
@@ -6,11 +8,13 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:}
     password: ${SPRING_DATASOURCE_PASSWORD:}
     hikari:
+      initialization-fail-timeout: 0
       maximum-pool-size: 5
       minimum-idle: 1
       idle-timeout: 30000
       max-lifetime: 600000
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:none}
   cache:
@@ -24,6 +28,8 @@ spring:
       enabled: true
   data:
     redis:
+      repositories:
+        enabled: false
       host: ${SPRING_DATA_REDIS_HOST:localhost}
       port: ${SPRING_DATA_REDIS_PORT:6379}
   grpc:
@@ -47,23 +53,13 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include:
+          - health
+          - info
+          - prometheus
   metrics:
     tags:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram:
         "[http.server.requests]": true
-  tracing:
-    sampling:
-      probability: 1.0   
-  opentelemetry:
-    tracing:
-      export:
-        otlp:
-          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
-          transport: grpc
-  otlp:
-    metrics:
-      export:
-        enabled: false

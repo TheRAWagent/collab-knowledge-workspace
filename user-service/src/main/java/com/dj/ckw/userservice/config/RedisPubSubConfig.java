@@ -4,6 +4,7 @@ import com.dj.ckw.userservice.service.UserEventListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -24,6 +25,7 @@ public class RedisPubSubConfig {
   public static final String USER_EVENTS_TOPIC = "user-events";
 
   @Bean
+  @Lazy(false)
   RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
       MessageListenerAdapter listenerAdapter) {
     log.info("Initializing Redis Pub/Sub message listener");

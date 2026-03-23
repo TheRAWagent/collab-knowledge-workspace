@@ -1,4 +1,17 @@
 spring:
+  main:
+    lazy-initialization: true
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 20
+        queue-capacity: 100
+  datasource:
+    hikari:
+      maximum-pool-size: 3
+      minimum-idle: 1
+      connection-timeout: 30000
   application:
     name: ai-service
   threads:
@@ -8,23 +21,13 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include:
+          - health
+          - info
+          - prometheus
   metrics:
     tags:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram:
         "[http.server.requests]": true
-  tracing:
-    sampling:
-      probability: 1.0   
-  opentelemetry:
-    tracing:
-      export:
-        otlp:
-          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
-          transport: grpc
-  otlp:
-    metrics:
-      export:
-        enabled: false

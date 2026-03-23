@@ -22,7 +22,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("io.grpc:grpc-services")
-    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
+    implementation("org.springframework.grpc:spring-grpc-server-spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("com.h2database:h2")
@@ -36,7 +36,6 @@ dependencies {
             replacedBy("io.grpc:grpc-netty-shaded", "Use Netty shaded instead of regular Netty")
         }
     }
-    implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     implementation("ch.qos.logback:logback-classic")
     implementation(libs.logstash.logback.encoder)
     implementation("io.micrometer:micrometer-registry-prometheus")

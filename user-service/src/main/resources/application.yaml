@@ -1,4 +1,6 @@
 spring:
+  main:
+    lazy-initialization: true
   application:
     name: user-service
   datasource:
@@ -12,6 +14,8 @@ spring:
       max-lifetime: 600000
   data:
     redis:
+      repositories:
+        enabled: false
       host: ${SPRING_REDIS_HOST:localhost}
       port: ${SPRING_REDIS_PORT:6379}
   threads:
@@ -34,23 +38,13 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include:
+          - health
+          - info
+          - prometheus
   metrics:
     tags:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram:
         "[http.server.requests]": true
-  tracing:
-    sampling:
-      probability: 1.0
-  opentelemetry:
-    tracing:
-      export:
-        otlp:
-          transport: grpc
-          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
-  otlp:
-    metrics:
-      export:
-        enabled: false

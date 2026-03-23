@@ -1,4 +1,6 @@
 spring:
+  main:
+    lazy-initialization: true
   application:
     name: "api-gateway"
   cloud:
@@ -233,31 +235,12 @@ management:
           - health
           - info
           - prometheus
-          - metrics
-          - loggers
-          - mappings
-          - threaddump
-          - heapdump
-          - env
-          - configprops
-          - beans
-          - mappings
+  endpoint:
+    health:
+      show-details: never
   metrics:
     tags:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram:
         "[http.server.requests]": true
-  tracing:
-    sampling:
-      probability: 1.0
-  opentelemetry:
-    tracing:
-      export:
-        otlp:
-          transport: grpc
-          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
-  otlp:
-    metrics:
-      export:
-        enabled: false

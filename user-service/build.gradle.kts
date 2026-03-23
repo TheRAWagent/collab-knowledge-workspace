@@ -30,9 +30,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("io.grpc:grpc-services")
     implementation("org.flywaydb:flyway-database-postgresql")
-    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
+    implementation("org.springframework.grpc:spring-grpc-server-spring-boot-starter")
     implementation("org.postgresql:postgresql")
-    runtimeOnly("com.h2database:h2")
+    testRuntimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-redis-test")
@@ -55,7 +55,6 @@ dependencies {
             )
         }
     }
-    implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     implementation("ch.qos.logback:logback-classic")
     implementation(libs.logstash.logback.encoder)
     implementation("io.micrometer:micrometer-registry-prometheus")

@@ -23,10 +23,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
-    implementation("io.grpc:grpc-services")
     implementation("org.springframework.grpc:spring-grpc-client-spring-boot-starter")
     runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("com.h2database:h2")
+    testRuntimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-redis-test")
@@ -44,7 +43,6 @@ dependencies {
     implementation(libs.logstash.logback.encoder)
     implementation("io.micrometer:micrometer-registry-prometheus")
     testImplementation("org.springframework.boot:spring-boot-starter-micrometer-metrics-test")
-    implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     implementation(platform(libs.spring.grpc.bom))
 }
 

@@ -48,12 +48,7 @@ subprojects {
                     "BP_JVM_VERSION" to libs.versions.java.get(),
                     "BP_SPRING_CLOUD_BINDINGS_DISABLED" to "true",
                     "SPRING_PROFILES_ACTIVE" to "build",
-                    "BPL_JVM_THREAD_COUNT" to "20",
-                    "BPL_JVM_HEAD_ROOM" to "15",
-                    "JAVA_TOOL_OPTIONS" to """
-                        -XX:ReservedCodeCacheSize=128M
-                        -Xss512k
-                    """
+                    "BP_OPENTELEMETRY_ENABLED" to "true"
                 )
             )
             publish.set(registry.isPresent)

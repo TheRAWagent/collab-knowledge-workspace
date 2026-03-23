@@ -22,7 +22,6 @@ dependencies {
 	implementation("org.springframework.ai:spring-ai-starter-model-openai")
 	implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
-  implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
   implementation("org.flywaydb:flyway-database-postgresql")
 	runtimeOnly("org.postgresql:postgresql")
   implementation("io.micrometer:micrometer-registry-prometheus")
