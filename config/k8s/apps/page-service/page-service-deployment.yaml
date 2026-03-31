@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: page-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: page-service
+  template:
+    metadata:
+      labels:
+        app: page-service
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: page-service-configmap
+            - secretRef:
+                name: page-service-secrets
+          image: '192.168.29.125/prod/page-service:0.0.1-SNAPSHOT'
+          name: page-service
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "768Mi"
+              cpu: "1000m"
+            requests:
+              memory: "512Mi"
+              cpu: "900m"
+      imagePullSecrets:
+        - name: registry-secret
+      restartPolicy: Always

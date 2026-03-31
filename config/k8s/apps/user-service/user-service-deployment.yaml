@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: user-service-configmap
+            - secretRef:
+                name: user-service-secrets
+          image: '192.168.29.125/prod/user-service:0.0.1-SNAPSHOT'
+          name: user-service
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "768Mi"
+              cpu: "1000m"
+            requests:
+              memory: "512Mi"
+              cpu: "1000m"
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: registry-secret

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: api-gateway-configmap
+          image: '192.168.29.125/prod/api-gateway:0.0.1-SNAPSHOT'
+          imagePullPolicy: Always
+          name: api-gateway
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "512m"
+            requests:
+              memory: "384Mi"
+              cpu: "384m"
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: registry-secret

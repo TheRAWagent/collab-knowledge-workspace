@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collaboration-service-configmap
+  annotations:
+    note: "Using Host IP for redis, change it to service name when deploying redis in cluster"
+data:
+  REDIS_HOST: "192.168.29.29"
+  REDIS_PORT: "6379"
+  BASE_URL: http://page-service:8080
+  PORT: "8080"

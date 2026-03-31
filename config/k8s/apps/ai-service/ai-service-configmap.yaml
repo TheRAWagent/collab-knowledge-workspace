@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  BPL_JVM_HEAD_ROOM: "10"
+  BPL_JVM_THREAD_COUNT: "20"
+  JAVA_TOOL_OPTIONS: "-XX:ReservedCodeCacheSize=64M -XX:MaxDirectMemorySize=64M -XX:+UseZGC --enable-native-access=ALL-UNNAMED"
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://grafana-k8s-monitoring-alloy-receiver.observability.svc.cluster.local:4318
+  OTEL_SERVICE_NAME: ai-service
+  OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+kind: ConfigMap
+metadata:
+  name: ai-service-configmap

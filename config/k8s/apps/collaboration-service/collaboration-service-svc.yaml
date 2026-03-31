@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: collaboration-service
+  namespace: apps
+spec:
+  selector:
+    app: collaboration-service
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8080
+      targetPort: 8080
+    - protocol: TCP
+      name: metrics
+      port: 9091
+      targetPort: 9091

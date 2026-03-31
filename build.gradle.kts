@@ -40,8 +40,10 @@ subprojects {
                 }
             }
 
-            builder.set("paketobuildpacks/builder-jammy-java-tiny")
-            runImage.set("paketobuildpacks/run-jammy-tiny")
+            builder.set("paketobuildpacks/builder-jammy-base")
+            runImage.set("paketobuildpacks/run-jammy-base")
+
+            buildpacks.set(listOf("paketobuildpacks/java", "paketobuildpacks/opentelemetry"))
 
             environment.set(
                 mapOf(

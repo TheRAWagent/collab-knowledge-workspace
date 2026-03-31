@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  API_GATEWAY_ALLOWED_ORIGINS: "http://192.168.29.125:5173,https://ckw.dhairya.co,http://localhost:5173"
+  AUTH_SERVICE_URL: http://auth-service:8080
+  WORKSPACE_SERVICE_ADDRESS: workspace-service
+  WORKSPACE_SERVICE_GRPC_PORT: "9090"
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://grafana-k8s-monitoring-alloy-receiver.observability.svc.cluster.local:4318
+  OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+  OTEL_SERVICE_NAME: api-gateway
+  BPL_JVM_HEAD_ROOM: "10"
+  BPL_JVM_THREAD_COUNT: "20"
+  JAVA_TOOL_OPTIONS: "-XX:ReservedCodeCacheSize=64M -XX:MaxDirectMemorySize=64M -XX:+UseZGC --enable-native-access=ALL-UNNAMED"
+  OTEL_JAVAAGENT_ENABLED: "true"
+kind: ConfigMap
+metadata:
+  name: api-gateway-configmap

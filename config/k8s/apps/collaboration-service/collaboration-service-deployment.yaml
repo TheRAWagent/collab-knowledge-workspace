@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collaboration-service
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collaboration-service
+  template:
+    metadata:
+      labels:
+        app: collaboration-service
+    spec:
+      containers:
+        - image: "192.168.29.125/prod/collaboration-service:0.0.1-SNAPSHOT"
+          name: collaboration-service
+          envFrom:
+            - configMapRef:
+                name: collaboration-service-configmap
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+            requests:
+              memory: "128Mi"
+              cpu: "125m"
+      restartPolicy: Always

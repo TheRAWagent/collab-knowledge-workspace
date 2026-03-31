@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  AUTH_COOKIE_SECURE: "true"
+  SCALAR_ENABLED: "false"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: update
+  SPRING_SQL_INIT_MODE: never
+  USER_SERVICE_ADDRESS: user-service
+  USER_SERVICE_GRPC_PORT: "9090"
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://grafana-k8s-monitoring-alloy-receiver.observability.svc.cluster.local:4318
+  OTEL_SERVICE_NAME: auth-service
+  OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+kind: ConfigMap
+metadata:
+  name: auth-service-configmap

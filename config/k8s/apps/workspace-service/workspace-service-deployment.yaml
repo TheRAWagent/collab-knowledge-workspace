@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workspace-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workspace-service
+  template:
+    metadata:
+      labels:
+        app: workspace-service
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: workspace-service-configmap
+            - secretRef:
+                name: workspace-service-secrets
+          image: '192.168.29.125/prod/workspace-service:0.0.1-SNAPSHOT'
+          name: workspace-service
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "768Mi"
+              cpu: "1000m"
+            requests:
+              memory: "512Mi"
+              cpu: "1000m"
+          ports:
+            - containerPort: 8080
+            - containerPort: 9090
+      imagePullSecrets:
+        - name: registry-secret
+      restartPolicy: Always
