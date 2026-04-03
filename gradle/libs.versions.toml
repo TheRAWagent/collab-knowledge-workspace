@@ -3,11 +3,11 @@
 java = "25"
 
 # Platform
-spring-boot = "4.0.3"
+spring-boot = "4.0.5"
 spring-cloud = "2025.1.1"
 spring-grpc = "1.0.2"
 spring-dependency-management = "1.1.7"
-spring-ai = "2.0.0-M2"
+spring-ai = "2.0.0-M4"
 
 # Protobuf code generation
 protobuf-plugin = "0.9.6"
@@ -15,14 +15,14 @@ protoc = "4.33.4"
 grpc-codegen = "1.77.1"
 
 # AWS SDK
-aws-sdk = "2.41.4"
+aws-sdk = "2.42.26"
 
 # Security/Cryptography
 jjwt = "0.13.0"
 bouncycastle = "1.83"
 
 # OpenAPI
-springdoc = "3.0.1"
+springdoc = "3.0.2"
 
 # Observability
 logback = "9.0"
