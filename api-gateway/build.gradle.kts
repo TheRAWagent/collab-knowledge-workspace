@@ -26,7 +26,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webclient")
     testImplementation("org.springframework.boot:spring-boot-starter-webclient-test")
-    // implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     implementation("ch.qos.logback:logback-classic")
     implementation(libs.logstash.logback.encoder)
     implementation("io.micrometer:micrometer-registry-prometheus")

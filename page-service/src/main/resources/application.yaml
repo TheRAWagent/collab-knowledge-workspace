@@ -26,7 +26,12 @@ management:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram:
-        "[http.server.requests]": true
+        "[http.server.requests]": false
+    enable:
+      all: false
+      "[http.server.requests]": true
+      "[process.cpu]": true
+      "[jvm.memory.used]": true
 logging:
   config: classpath:logback-spring.xml
   level:

@@ -36,7 +36,13 @@ management:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram:
-        "[http.server.requests]": true
+        "[http.server.requests]": false
+    enable:
+      all: false
+      "[http.server.requests]": true
+      "[process.cpu]": true
+      "[jvm.memory.used]": true
+      "[hikaricp.connections]": true
   tracing:
     sampling:
       probability: 1.0

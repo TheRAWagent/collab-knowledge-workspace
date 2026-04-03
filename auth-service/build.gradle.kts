@@ -42,7 +42,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic")
     implementation(libs.logstash.logback.encoder)
     implementation("io.micrometer:micrometer-registry-prometheus")
-    testImplementation("org.springframework.boot:spring-boot-starter-micrometer-metrics-test")
     implementation(platform(libs.spring.grpc.bom))
 }
 
